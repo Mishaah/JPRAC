@@ -34,9 +34,20 @@ Go to your favorite (supported) map.
 
 ## Screenshots
 
+Settings Menu Wall A
 ![Settings Menu Wall A](/readme_screens/20240821171443_1.jpg)
+
+Settings Menu Wall B
 ![Settings Menu Wall B](/readme_screens/20240821171450_1.jpg)
+
+Settings Menu Wall C
 ![Settings Menu Wall C](/readme_screens/20240821171455_1.jpg)
+
+Settings Menu Wall D
 ![Settings Menu Wall D](/readme_screens/20240821171501_1.jpg)
+
+Objective + Timer
 ![Objective + Timer](/readme_screens/20240821172608_1.jpg)
+
+Bot Setup
 ![Bot Setup](/readme_screens/20240821173037_1.jpg)
