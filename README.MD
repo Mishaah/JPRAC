@@ -13,20 +13,20 @@
 ### To install:
 
 1.  Download jprac.cfg and jprac.nut from this repository
-2.  Move jprac.cfg to 'Program Files (x86) / Steam / steamapps / common / Team Fortress 2 / tf / cfg'
-3.  Move jprac.nut to 'Program Files (x86) / Steam / steamapps / common / Team Fortress 2 / scripts / vscripts'
+2.  Move the downloaded jprac.cfg file to "Program Files (x86)/Steam/steamapps/common/Team Fortress 2/tf/cfg"
+3.  Move the downloaded jprac.nut file to "Program Files (x86)/Steam/steamapps/common/Team Fortress 2/scripts/vscripts"
 
-Note: You may need to create the 'vscripts' folder inside scripts manually.
+*Note: You may need to create the 'vscripts' folder inside scripts manually.*
 
 
 ### To use:
 
 Go to your favorite (supported) map.
-- Press 'n' to initialize the script
-- Press 'b' to configure settings in the built-in menu
+- Press 'n' to initialize the script.
+- Press 'b' to enter the settings menu to configure your settings.
 - Press 'v' to execute your configured settings. Usually this will teleport, heal, regen ammo and setup bots for example.
-Note: The keys to press are based on default bindings, which can be changed in the jprac.cfg file.
+
+*Note: You can change the default bindings in the jprac.cfg file.*
 
 
-#### IMPORTANT NOTE:  I have started this project a while back and had big plans to add more features and improve it overall. However, plans change. Instead of letting it collect dust however, I have decided to release it AS IS. Meaning expect bugs, unimplemented features and missing support. Feel free to contribute code if you like this resource and would like to see it improved.
-
+#### IMPORTANT NOTE:  I have started this project a while back and had big plans to add more features and improve it overall. However, plans change. Instead of letting it collect dust however, I have decided to release it AS IS. Meaning expect bugs, unimplemented or incomplete features and missing support. Feel free to contribute code (changes) if you like this resource and would like to see it improved.
