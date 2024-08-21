@@ -2533,6 +2533,11 @@ function saveTele4()
     {
         destroyObjectiveTrigger()
         SendToConsole("ent_absbox objectiveBoundary")
+        SendToConsole("developer 1") // TODO: find different way to show box of objective
+    }
+    if(chosenTeleObjective != teleObjectives.REACH)
+    {
+        SendToConsole("developer 0")       
     }
 
     if(toTeleObjective == teleObjectives.REACH && objectiveBoundaries.len() == 0) ClientPrintSafe(null, "Use F9 to place a reach objective on your cursor")
