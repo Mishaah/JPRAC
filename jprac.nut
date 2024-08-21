@@ -2533,6 +2533,9 @@ function saveTele4()
     {
         destroyObjectiveTrigger()
         SendToConsole("ent_absbox objectiveBoundary")
+    }
+    if(chosenTeleObjective == teleObjectives.REACH)
+    {
         SendToConsole("developer 1") // TODO: find different way to show box of objective
     }
     if(chosenTeleObjective != teleObjectives.REACH)
