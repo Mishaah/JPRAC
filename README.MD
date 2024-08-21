@@ -13,9 +13,8 @@
 ### To install:
 
 1.  Download jprac.cfg and jprac.nut from this repository
-2.  Move the downloaded jprac.cfg file to "Program Files (x86)/Steam/steamapps/common/Team Fortress 2/tf/cfg"
-3.  Move the downloaded jprac.nut file to "Program Files (x86)/Steam/steamapps/common/Team Fortress 2/scripts/vscripts"
-
+2.  Move jprac.cfg to "Program Files (x86)/Steam/steamapps/common/Team Fortress 2/tf/cfg"
+3.  Move jprac.nut to "Program Files (x86)/Steam/steamapps/common/Team Fortress 2/scripts/vscripts"
 *Note: You may need to create the 'vscripts' folder inside scripts manually.*
 
 
@@ -24,8 +23,7 @@
 Go to your favorite (supported) map.
 - Press 'n' to initialize the script.
 - Press 'b' to enter the settings menu to configure your settings.
-- Press 'v' to execute your configured settings. Usually this will teleport, heal, regen ammo and setup bots for example.
-
+- Press 'v' to execute. Usually this will teleport, heal, regen ammo and set up bots for example.
 *Note: You can change the default bindings in the jprac.cfg file.*
 
 
