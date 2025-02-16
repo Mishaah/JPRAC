@@ -257,13 +257,13 @@ maps.cp_gullywash_f9.gamemode                                <- maps.cp_gullywas
 maps.cp_gullywash_f9.teles                                   <- {}
 maps.cp_gullywash_f9.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
 maps.cp_gullywash_f9.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_gullywash_f9.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_gullywash_f9.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-4195 ,830   ,310   ), ang = QAngle(0   ,35  ,0   ), vel = Vector(0,0,0)}
 maps.cp_gullywash_f9.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-20 ,0   ), vel = Vector(0,0,0)}
 maps.cp_gullywash_f9.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_gullywash_f9.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_gullywash_f9.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_gullywash_f9.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_gullywash_f9.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_gullywash_f9.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-1770 ,1145  ,165   ), ang = QAngle(0   ,-20 ,0   ), vel = Vector(0,0,0)}
+maps.cp_gullywash_f9.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(35    ,1400  ,255   ), ang = QAngle(0   ,-115,0   ), vel = Vector(0,0,0)}
+maps.cp_gullywash_f9.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(330   ,-855  ,255   ), ang = QAngle(0   ,-130,0   ), vel = Vector(0,0,0)}
+maps.cp_gullywash_f9.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(1920  ,-740  ,300   ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
 maps.cp_gullywash_f9.setups                                  <- {}
 maps.cp_gullywash_f9.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_gullywash_f9.teles.lob}
 maps.cp_gullywash_f9.setups.sec.bots                                 <- {}
@@ -339,14 +339,14 @@ maps.cp_snakewater_final1.name                                    <- "cp_snakewa
 maps.cp_snakewater_final1.gamemode                                <- maps.cp_snakewater_final1.name.slice(0, maps.cp_snakewater_final1.name.find("_"))
 maps.cp_snakewater_final1.teles                                   <- {}
 maps.cp_snakewater_final1.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_snakewater_final1.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(5805  ,-1265 ,-85   ), ang = QAngle(0   ,160 ,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(5800  ,-1955 ,-85   ), ang = QAngle(5   ,-160,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(1945  ,-2435 ,-180  ), ang = QAngle(0   ,90  ,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(2060  ,290   ,-20   ), ang = QAngle(0   ,-180,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(3735  ,-1075 ,10    ), ang = QAngle(5   ,-165,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(1885  ,-365  ,-20   ), ang = QAngle(0   ,105 ,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-775  ,510   ,-20   ), ang = QAngle(0   ,90  ,0   ), vel = Vector(0,0,0)}
+maps.cp_snakewater_final1.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-2365 ,2160  ,85    ), ang = QAngle(5   ,-115,0   ), vel = Vector(0,0,0)}
 maps.cp_snakewater_final1.setups                                  <- {}
 maps.cp_snakewater_final1.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_snakewater_final1.teles.lob}
 maps.cp_snakewater_final1.setups.sec.bots                                 <- {}
@@ -421,15 +421,15 @@ maps.cp_sunshine                                     <- {}
 maps.cp_sunshine.name                                    <- "cp_sunshine"
 maps.cp_sunshine.gamemode                                <- maps.cp_sunshine.name.slice(0, maps.cp_sunshine.name.find("_"))
 maps.cp_sunshine.teles                                   <- {}
-maps.cp_sunshine.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sunshine.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(-5635 ,5285  ,1100  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-3420 ,760   ,-110  ), ang = QAngle(0   ,50  ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-3840 ,765   ,-110  ), ang = QAngle(0   ,130 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-2985 ,4400  ,5     ), ang = QAngle(0   ,-180,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-4525 ,4865  ,20    ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-4015 ,2440  ,65    ), ang = QAngle(0   ,50  ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(-4160 ,4470  ,5     ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-6135 ,5860  ,5     ), ang = QAngle(0   ,155 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sunshine.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-7855 ,7695  ,-60   ), ang = QAngle(0   ,45  ,0   ), vel = Vector(0,0,0)}
 maps.cp_sunshine.setups                                  <- {}
 maps.cp_sunshine.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_sunshine.teles.lob}
 maps.cp_sunshine.setups.sec.bots                                 <- {}
@@ -504,15 +504,15 @@ maps.cp_metalworks_f5                                     <- {}
 maps.cp_metalworks_f5.name                                    <- "cp_metalworks_f5"
 maps.cp_metalworks_f5.gamemode                                <- maps.cp_metalworks_f5.name.slice(0, maps.cp_metalworks_f5.name.find("_"))
 maps.cp_metalworks_f5.teles                                   <- {}
-maps.cp_metalworks_f5.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_metalworks_f5.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(155   ,-875  ,325   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-2475 ,4065  ,-220  ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-2070 ,4070  ,-220  ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-2855 ,645   ,-255  ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-820  ,-1075 ,-380  ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-2450 ,1545  ,-255  ), ang = QAngle(0   ,-65 ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(-695  ,-50   ,-255  ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(775   ,-1755 ,-255  ), ang = QAngle(0   ,35  ,0   ), vel = Vector(0,0,0)}
+maps.cp_metalworks_f5.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(2620  ,-3005 ,-255  ), ang = QAngle(0   ,-105,0   ), vel = Vector(0,0,0)}
 maps.cp_metalworks_f5.setups                                  <- {}
 maps.cp_metalworks_f5.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_metalworks_f5.teles.lob}
 maps.cp_metalworks_f5.setups.sec.bots                                 <- {}
@@ -587,15 +587,15 @@ maps.cp_granary_pro_rc8                                     <- {}
 maps.cp_granary_pro_rc8.name                                    <- "cp_granary_pro_rc8"
 maps.cp_granary_pro_rc8.gamemode                                <- maps.cp_granary_pro_rc8.name.slice(0, maps.cp_granary_pro_rc8.name.find("_"))
 maps.cp_granary_pro_rc8.teles                                   <- {}
-maps.cp_granary_pro_rc8.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_granary_pro_rc8.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(-1520 ,5     ,235   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-1030 ,-5660 ,-415  ), ang = QAngle(0   ,85  ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-1985 ,-5655 ,-415  ), ang = QAngle(0   ,95  ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-2190 ,-3315 ,-255  ), ang = QAngle(0   ,90  ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-2715 ,515   ,-415  ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-1875 ,-3380 ,-415  ), ang = QAngle(0   ,40  ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(-2665 ,-1090 ,-390  ), ang = QAngle(0   ,70  ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-390  ,950   ,-390  ), ang = QAngle(0   ,115 ,0   ), vel = Vector(0,0,0)}
+maps.cp_granary_pro_rc8.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-1295 ,2685  ,-415  ), ang = QAngle(0   ,125 ,0   ), vel = Vector(0,0,0)}
 maps.cp_granary_pro_rc8.setups                                  <- {}
 maps.cp_granary_pro_rc8.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_granary_pro_rc8.teles.lob}
 maps.cp_granary_pro_rc8.setups.sec.bots                                 <- {}
@@ -670,15 +670,15 @@ maps.cp_prolands_rc2ta                                     <- {}
 maps.cp_prolands_rc2ta.name                                    <- "cp_prolands_rc2ta"
 maps.cp_prolands_rc2ta.gamemode                                <- maps.cp_prolands_rc2ta.name.slice(0, maps.cp_prolands_rc2ta.name.find("_"))
 maps.cp_prolands_rc2ta.teles                                   <- {}
-maps.cp_prolands_rc2ta.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_prolands_rc2ta.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(-5    ,-5    ,680   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(385   ,4495  ,195   ), ang = QAngle(0   ,-115,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(1175  ,4445  ,195   ), ang = QAngle(0   ,-65 ,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(245   ,2365  ,195   ), ang = QAngle(0   ,-85 ,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(970   ,340   ,290   ), ang = QAngle(0   ,-130,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(1280  ,2390  ,5     ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(1690  ,360   ,120   ), ang = QAngle(0   ,-150,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-595  ,-110  ,300   ), ang = QAngle(0   ,-180,0   ), vel = Vector(0,0,0)}
+maps.cp_prolands_rc2ta.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-760  ,-2830 ,195   ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
 maps.cp_prolands_rc2ta.setups                                  <- {}
 maps.cp_prolands_rc2ta.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_prolands_rc2ta.teles.lob}
 maps.cp_prolands_rc2ta.setups.sec.bots                                 <- {}
@@ -754,14 +754,14 @@ maps.cp_sultry_b8a.name                                    <- "cp_sultry_b8a"
 maps.cp_sultry_b8a.gamemode                                <- maps.cp_sultry_b8a.name.slice(0, maps.cp_sultry_b8a.name.find("_"))
 maps.cp_sultry_b8a.teles                                   <- {}
 maps.cp_sultry_b8a.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_sultry_b8a.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(2765  ,-4695 ,610   ), ang = QAngle(0   ,40  ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(2495  ,-4680 ,610   ), ang = QAngle(0   ,140 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(3575  ,-795  ,645   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(1075  ,-155  ,515   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(2140  ,-2655 ,645   ), ang = QAngle(0   ,60  ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(1770  ,-765  ,545   ), ang = QAngle(0   ,140 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-815  ,565   ,545   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_sultry_b8a.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-2590 ,2010  ,645   ), ang = QAngle(0   ,55  ,0   ), vel = Vector(0,0,0)}
 maps.cp_sultry_b8a.setups                                  <- {}
 maps.cp_sultry_b8a.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_sultry_b8a.teles.lob}
 maps.cp_sultry_b8a.setups.sec.bots                                 <- {}
@@ -837,14 +837,14 @@ maps.cp_reckoner_rc6.name                                    <- "cp_reckoner_rc6
 maps.cp_reckoner_rc6.gamemode                                <- maps.cp_reckoner_rc6.name.slice(0, maps.cp_reckoner_rc6.name.find("_"))
 maps.cp_reckoner_rc6.teles                                   <- {}
 maps.cp_reckoner_rc6.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_reckoner_rc6.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(2080  ,4455  ,225   ), ang = QAngle(0   ,-145,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(2705  ,4460  ,225   ), ang = QAngle(0   ,-45 ,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(1050  ,2510  ,325   ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(1790  ,-330  ,260   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(1910  ,2270  ,325   ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(1570  ,150   ,260   ), ang = QAngle(0   ,-165,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-1580 ,245   ,260   ), ang = QAngle(0   ,-105,0   ), vel = Vector(0,0,0)}
+maps.cp_reckoner_rc6.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-2520 ,-2100 ,180   ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
 maps.cp_reckoner_rc6.setups                                  <- {}
 maps.cp_reckoner_rc6.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_reckoner_rc6.teles.lob}
 maps.cp_reckoner_rc6.setups.sec.bots                                 <- {}
@@ -920,14 +920,14 @@ maps.cp_entropy_b5.name                                    <- "cp_entropy_b5"
 maps.cp_entropy_b5.gamemode                                <- maps.cp_entropy_b5.name.slice(0, maps.cp_entropy_b5.name.find("_"))
 maps.cp_entropy_b5.teles                                   <- {}
 maps.cp_entropy_b5.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.cp_entropy_b5.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-1115 ,-4345 ,-30   ), ang = QAngle(0   ,50  ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-1435 ,-4345 ,-30   ), ang = QAngle(0   ,135 ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1070 ,-1985 ,-190  ), ang = QAngle(0   ,135 ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-525  ,-45   ,-335  ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-1865 ,-2940 ,-30   ), ang = QAngle(0   ,60  ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(-1210 ,-245  ,-125  ), ang = QAngle(0   ,45  ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(1505  ,380   ,-190  ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.cp_entropy_b5.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(1810  ,2190  ,35    ), ang = QAngle(0   ,115 ,0   ), vel = Vector(0,0,0)}
 maps.cp_entropy_b5.setups                                  <- {}
 maps.cp_entropy_b5.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.cp_entropy_b5.teles.lob}
 maps.cp_entropy_b5.setups.sec.bots                                 <- {}
@@ -1003,14 +1003,14 @@ maps.koth_product_final.name                                    <- "koth_product
 maps.koth_product_final.gamemode                                <- maps.koth_product_final.name.slice(0, maps.koth_product_final.name.find("_"))
 maps.koth_product_final.teles                                   <- {}
 maps.koth_product_final.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_product_final.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-1470 ,3110  ,65    ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-1300 ,3215  ,65    ), ang = QAngle(0   ,-25 ,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1460 ,1945  ,5     ), ang = QAngle(0   ,-150,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-520  ,1910  ,130   ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-1380 ,1025  ,165   ), ang = QAngle(0   ,-40 ,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(-2080 ,1990  ,130   ), ang = QAngle(0   ,-105,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(-2665 ,-1230 ,135   ), ang = QAngle(0   ,-45 ,0   ), vel = Vector(0,0,0)}
+maps.koth_product_final.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(-1355 ,-1080 ,165   ), ang = QAngle(0   ,-90 ,0   ), vel = Vector(0,0,0)}
 maps.koth_product_final.setups                                  <- {}
 maps.koth_product_final.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.koth_product_final.teles.lob}
 maps.koth_product_final.setups.sec.bots                                 <- {}
@@ -1085,15 +1085,15 @@ maps.koth_bagel_rc7                                     <- {}
 maps.koth_bagel_rc7.name                                    <- "koth_bagel_rc7"
 maps.koth_bagel_rc7.gamemode                                <- maps.koth_bagel_rc7.name.slice(0, maps.koth_bagel_rc7.name.find("_"))
 maps.koth_bagel_rc7.teles                                   <- {}
-maps.koth_bagel_rc7.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000  ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-4205 ,650   ,310   ), ang = QAngle(0   ,-35 ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-1740 ,1645  ,170   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-490  ,600   ,60    ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
-maps.koth_bagel_rc7.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,720   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.rspawn                                <- { loc = teleLocations.RIGHT_SPAWN,    pos = Vector(-3525 ,-15   ,355   ), ang = QAngle(0   ,-65 ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.lspawn                                <- { loc = teleLocations.LEFT_SPAWN,     pos = Vector(-3465 ,255   ,355   ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.fw1                                   <- { loc = teleLocations.MID_FORWARD,    pos = Vector(-2475 ,-760  ,325   ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.fw2                                   <- { loc = teleLocations.SECOND_FORWARD, pos = Vector(-2060 ,845   ,355   ), ang = QAngle(0   ,-60 ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.lob                                   <- { loc = teleLocations.OUR_LOBBY,      pos = Vector(-1295 ,-10   ,285   ), ang = QAngle(0   ,-30 ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.choke                                 <- { loc = teleLocations.OUR_CHOKE,      pos = Vector(-1450 ,355   ,385   ), ang = QAngle(0   ,45  ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.tchoke                                <- { loc = teleLocations.THEIR_CHOKE,    pos = Vector(1150  ,775   ,150   ), ang = QAngle(0   ,0   ,0   ), vel = Vector(0,0,0)}
+maps.koth_bagel_rc7.teles.tlob                                  <- { loc = teleLocations.THEIR_LOBBY,    pos = Vector(960   ,-720  ,380   ), ang = QAngle(0   ,35  ,0   ), vel = Vector(0,0,0)}
 maps.koth_bagel_rc7.setups                                  <- {}
 maps.koth_bagel_rc7.setups.sec                                  <- { stp = botSetups.OUR_SECOND, tele = maps.koth_bagel_rc7.teles.lob}
 maps.koth_bagel_rc7.setups.sec.bots                                 <- {}
