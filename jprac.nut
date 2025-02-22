@@ -1827,17 +1827,18 @@ function forceJoinTeam(team)
     local objectiveResetRate = round(objectiveResets.tofloat() / objectiveRuns.tofloat() * 100,0)
 
     //local objectiveStatMessage = "^FFFFFF[^00FF00" + objectivePassRate + "%^FFFFFF/^FF0000" + objectiveFailRate + "%^FFFFFF/^808080" + objectiveResetRate + "%^FFFFFF] "
+    local messageStats = " with %^9ED57E" + objectivePassRate + "^FFFFFF/^E78174" + objectiveFailRate + "^FFFFFF/^808080" + objectiveResetRate
 
-    local messageTag = "[JPRAC]"
+    local messageTag = "^FFFFFF[JPRAC]"
     local messageRunAmount = " #" + objectiveRuns + ":"
 
     local messageResult = ""
     switch(objectiveResult){
-        case objectiveResults.RESET: messageResult = " RESET"
+        case objectiveResults.RESET: messageResult = "^808080 RESET^FFFFFF"
             break
-        case objectiveResults.PASS: messageResult = " PASS"
+        case objectiveResults.PASS:  messageResult = "^9ED57E PASS^FFFFFF"
             break
-        case objectiveResults.FAIL: messageResult = " FAIL"
+        case objectiveResults.FAIL:  messageResult = "^E78174 FAIL^FFFFFF"
             break
         default: 
     }
@@ -1864,12 +1865,12 @@ function forceJoinTeam(team)
             messageAverageSecondsElapsed = " avg. " + averageSecondsElapsed + "s"
         }
         local textDeltaPositive = ""
-        if (secondsElapsedDelta > 0) textDeltaPositive = "+"
+        if (secondsElapsedDelta > 0) textDeltaPositive = "^E78174+"
  
         if (objectiveResult == objectiveResults.RESET) messageTime = messageTime = " @" + secondsElapsed + "s"
-        else messageTime = " @" + secondsElapsed + "s" + " (" + textDeltaPositive + secondsElapsedDelta + ")" + messageAverageSecondsElapsed
+        else messageTime = " @" + secondsElapsed + "s" + " (^9ED57E" + textDeltaPositive + secondsElapsedDelta + "^FFFFFF)" + messageAverageSecondsElapsed
     }
-    local message = messageTag + messageRunAmount + messageResult + messageTime
+    local message = messageTag + messageRunAmount + messageResult + messageTime + messageStats
     //local message = objectiveStatMessage + "^FFFFFFReached objective after " + secondsElapsed + "s (^FF0000+" + secondsElapsedAfterTimer + "s^FFFFFF)"
     ClientPrintSafe(null, message)
 }
@@ -2770,7 +2771,7 @@ function saveTele4()
 }
 ::changeBotDifficulty <- function(difficulty)
 {
-    Convars.SetValue("tf_bot_difficulty", difficulty+1) // bit messy but there are 4 difficulties, this way we ignore the easiest option, and include expert option
+    Convars.SetValue("tf_bot_difficulty", difficulty+1)
 }
 ::changeBotSetup <- function(toBotSetup)
 {
@@ -3479,7 +3480,6 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
 
     objectiveBoundaries.append(objectiveBoundary)
 
-    //SendToConsole("ent_absbox objectiveBoundary") REPLACED with visual flag:
     local objectiveFlag = SpawnEntityFromTable("prop_dynamic", {origin = trace.pos, angles = Vector(0, RandomInt(0, 360), 0), model = "models/props_medieval/pendant_flag/pendant_flag.mdl", targetname = "objectiveFlag", solid = 0, modelscale = 0.4, disablereceiveshadows = true})
     objectiveFlag.SetPlaybackRate(1)
     
@@ -3502,10 +3502,17 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
     local wall3 = SpawnEntityFromTable("prop_dynamic", {origin = wallPos3, angles = Vector(0, 90,  0), model = "models/vgui/round_end_score_wall_spytech.mdl", targetname = "optionsMenu_wall3", solid = 0, })
     local wall4 = SpawnEntityFromTable("prop_dynamic", {origin = wallPos4, angles = Vector(0, 0,   0), model = "models/vgui/round_end_score_wall_spytech.mdl", targetname = "optionsMenu_wall4", solid = 0, })
 
-    local floor1 =       SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 0,    -10), model = "models/props_trainyard/crane_platform001.mdl", targetname = "optionsMenu_floor1",       solid = 6, })
-    local floorCable1 =  SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 0,    230), model = "models/props_trainyard/crane_cable001.mdl",    targetname = "optionsMenu_floorCable1",  solid = 0, })
-    local floorPulley1 = SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, -148, 235), model = "models/props_trainyard/pulley_block001.mdl",   targetname = "optionsMenu_floorPulley1", solid = 0, })
-    local floorPulley2 = SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 148,  235), model = "models/props_trainyard/pulley_block001.mdl",   targetname = "optionsMenu_floorPulley2", solid = 0, })
+    local beam1 = SpawnEntityFromTable("prop_dynamic", {origin = wallPos1 + Vector(444, 0, 205),    angles = Vector(0, 180, 0), model = "models/props_urban/urban_beam003.mdl", targetname = "optionsMenu_beam1", solid = 0, })
+    local beam2 = SpawnEntityFromTable("prop_dynamic", {origin = wallPos1 + Vector(444, -176, 205), angles = Vector(0, 90,  0), model = "models/props_urban/urban_beam003.mdl", targetname = "optionsMenu_beam2", solid = 0, })
+    local beam3 = SpawnEntityFromTable("prop_dynamic", {origin = wallPos1 + Vector(886, 0, 205),    angles = Vector(0, 0,   0), model = "models/props_urban/urban_beam003.mdl", targetname = "optionsMenu_beam3", solid = 0, })
+    local beam4 = SpawnEntityFromTable("prop_dynamic", {origin = wallPos1 + Vector(444, 266, 205),  angles = Vector(0, 270, 0), model = "models/props_urban/urban_beam003.mdl", targetname = "optionsMenu_beam4", solid = 0, })
+
+    local floor1 =       SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 0,    -10), model = "models/props_trainyard/crane_platform001.mdl",  targetname = "optionsMenu_floor1",       solid = 6, })
+    local pulleyBeam1 =  SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 0,    510), model = "models/props_urban/urban_beam003.mdl",          targetname = "optionsMenu_pulleyBeam1",  solid = 6, modelscale = 1.7,    })
+    local pulleyBox1 =   SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 0,    430), model = "models/props_trainyard/crane_box001.mdl",       targetname = "optionsMenu_pulleyBox1",   solid = 6, })
+    local floorCable1 =  SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 0,    230), model = "models/props_trainyard/crane_cable001.mdl",     targetname = "optionsMenu_floorCable1",  solid = 0, })
+    local floorPulley1 = SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, -148, 235), model = "models/props_trainyard/pulley_block001.mdl",    targetname = "optionsMenu_floorPulley1", solid = 0, })
+    local floorPulley2 = SpawnEntityFromTable("prop_dynamic", {origin = playerPos + Vector(0, 148,  235), model = "models/props_trainyard/pulley_block001.mdl",    targetname = "optionsMenu_floorPulley2", solid = 0, })
 
     local text_tele =           SpawnEntityFromTable("point_worldtext", {origin = wallPos1 + Vector(320, -110,85), angles = playerAng, targetname = "optionsMenu_text_tele",          textsize = 8, message = "TELE",                    })
     local text_teleLocation1 =  SpawnEntityFromTable("point_worldtext", {origin = wallPos1 + Vector(320, -56, 85), angles = playerAng, targetname = "optionsMenu_text_teleLocation1", textsize = 8, message = "LOCATION",                })
