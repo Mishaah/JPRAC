@@ -23,7 +23,7 @@
 ### To use
 
 Load into an offline (supported) map.
-- Press 'n' to initialize the script.
+- Press 'n' to initialize the script. IMPORTANT: First time you need to initialize manually by typing "exec jprac" in console.
 - Press 'b' to enter the settings menu to configure your settings.
 - Press 'v' to execute. Usually this will teleport, heal, regen ammo and set up bots for example.
 - Press F5-F8 to save a custom teleport position.
@@ -31,7 +31,7 @@ Load into an offline (supported) map.
 *Note: You can change the default bindings in the jprac.cfg file.*
 
 
-#### IMPORTANT NOTE:  I have started this project a while back and had big plans to add more features and improve it overall. However, plans change. Instead of letting it collect dust however, I have decided to release it AS IS. Meaning expect bugs, unimplemented or incomplete features and missing support. I'm hoping it will still be useful to some people out there. Feel free to contribute code (changes) if you like this resource and would like to see it improved.
+#### NOTE:  I have started this project a while back and had big plans to add more features and improve it overall. However, plans change. Instead of letting it collect dust however, I have decided to release it AS IS. Meaning expect bugs, unimplemented or incomplete features and missing support. I'm hoping it will still be useful to some people out there. Feel free to contribute code (changes) if you like this resource and would like to see it improved.
 
 ### Contact on steam: https://steamcommunity.com/id/Shadop_/
 
