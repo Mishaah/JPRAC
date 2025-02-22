@@ -21,10 +21,15 @@ enum teleLocations {
     OPTIONS_MENU,
 }
 enum teleObjectives {
-    SURVIVE,
-    KILL,
     REACH,
+    KILL,
     CAP,
+    NONE,
+}
+enum objectiveResults {
+    RESET,
+    PASS,
+    FAIL,
 }
 
 // ENUM REGION: HEALTH & HEALING
@@ -130,13 +135,6 @@ enum teams {
     BLUE,
 }
 
-enum timerMessages {
-    NONE,
-    RAN_OUT,
-    OBJECTIVE_REACHED,
-    OBJECTIVE_AFTER_RAN_OUT,
-    EARLY_RESET,
-}
 
 // TABLE REGION
 local gamemodes = {}
@@ -1163,30 +1161,38 @@ maps.koth_bagel_rc7.setups.roll4.bots.psoldier                          <- { pos
 maps.koth_bagel_rc7.setups.roll4.bots.demo                              <- { pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), name = "b0t5"         , merc = "demoman"     }
 maps.koth_bagel_rc7.setups.roll4.bots.medic                             <- { pos = Vector(0     ,0     ,0     ), ang = QAngle(0   ,0   ,0   ), name = "b0t6"         , merc = "medic"       }
 
+maps.cp_unsupported                                     <- {}
+maps.cp_unsupported.name                                    <- "cp_unsupported"
+maps.cp_unsupported.gamemode                                <- maps.cp_unsupported.name.slice(0, maps.cp_unsupported.name.find("_"))
+maps.cp_unsupported.teles                                   <- {}
+maps.cp_unsupported.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
+
 
 local sounds = {}
 sounds.buttonPress <- "passtime/ball_intercepted.wav"
+
 
 // VAR REGION: GENERAL
 local player
 local attackPressed = false
 local hasJumped = false
+local mapName
 local selectedMap
 local selectedGamemode
 local inOptionsMenu = false
 local optionsMenuExists = false
 local menuRotation
 local leftMenu = false
+local stvEnabled
 
 local objectiveDone = false
-local objectiveSuccesses = 0
+local objectivePasses = 0
 local objectiveFails = 0
 local objectiveResets = 0
 
 local posBeforeMenu = Vector(0,0,0)
 local angBeforeMenu = QAngle(0,0,0)
 local velBeforeMenu = Vector(0,0,0)
-//local destBeforeMenu = {}
 local destBeforeMenu = { pos = posBeforeMenu, ang = angBeforeMenu, vel = velBeforeMenu }
 
 local regenPacks = []
@@ -1204,6 +1210,8 @@ local tickTimerRoundRestartMax = ticksPerSecond * 5
 
 local tickTeleTimer = 0
 local tickTeleTimerMax
+
+local runningAverageSecondsElapsed
 
 local tickStopwatch = 0
 
@@ -1269,10 +1277,10 @@ local teleLocationMessages = [
     "CUSTOM\n  #4",
 ]
 local teleObjectiveMessages = [
-    "LIVE",
-    "KILL",
     "REACH",
+    "KILL",
     "CAP",
+    "NONE",
 ]
 local teleTimerMessages = [
     "+10s",
@@ -1478,10 +1486,16 @@ local objectiveBoundaries = []
 
 function main()
 {
+    //TODO: Use file system to save user options
+    //StringToFile("test","content")
+    //print(FileToString("test"))
+    
     player = GetListenServerHost()
     AddThinkToEnt(player, "PlayerThink");
 
     selectedMap = getMap()
+
+    stvEnabled = (EntIndexToHScript(2) != null)
 
     if(selectedMap == null) menuRotation = 0
     else menuRotation = selectedMap.teles.options.ang
@@ -1566,9 +1580,8 @@ function main()
     }
     if (tickTeleTimer == tickTeleTimerMax && tickTeleTimerMax != 0)
     {
-        if(chosenTeleObjective == teleObjectives.SURVIVE) sendTimerMessage(timerMessages.RAN_OUT)
+        if(chosenTeleObjective == teleObjectives.NONE) onObjectiveEnd(chosenTeleObjective, objectiveResults.FAIL)
         stopTeleTimer()
-        onTeleTimerEnd()
     }
     if (inOptionsMenu)
     {
@@ -1614,7 +1627,6 @@ function main()
     }
     if(tickUberTimer == tickUberTimerMax && tickUberTimerMax != 0)
     {
-        printl(tickUberTimerMax)
         stopUberTimer()
         onUberTimerEnd()
     }
@@ -1654,7 +1666,7 @@ function extractShortName(fullName)
 }
 function getMap()
 {
-    local mapName = GetMapName().tolower()
+    mapName = GetMapName().tolower()
 
     local shortMapName = extractShortName(mapName)
 
@@ -1667,8 +1679,7 @@ function getMap()
         }
     }
     printl("map is not supported")
-    //TODO: Handle unsupported map by adding to the table a new entry, so custom teles can still be used. Perhaps make unavailable option light up in different color
-    return null
+    return maps.cp_unsupported
 }
 function prepareMap()
 {
@@ -1676,7 +1687,6 @@ function prepareMap()
 
     while (timer = Entities.FindByClassname(timer, "team_round_timer"))
     {
-        printl("killed timer")
         timer.Kill()
     }
 
@@ -1699,15 +1709,13 @@ function prepareMap()
     }
     leaveOptionsMenu()
     destroyObjectiveTrigger()
-    
-
 }
 function setDefaultOptions()
 {
     chosenTele = teles.ON
     chosenTeleLocation = teleLocations.RIGHT_SPAWN
     chosenTeleTimer = 0
-    chosenTeleObjective = teleObjectives.SURVIVE
+    chosenTeleObjective = teleObjectives.NONE
 
     chosenHealth = health.ON_TELE
     chosenHealthRegen = 1.5
@@ -1733,7 +1741,7 @@ function setDefaultOptions()
     {
         if(tele.loc == loc) return tele
     }
-    printl("tele not bound or unavailable") //TODO: handle not found
+    printl("tele not bound or unavailable")
     return null
 }
 ::getBotSetup <- function(stp)
@@ -1753,7 +1761,6 @@ function setupBuilder(toBuilder)
     {
         EntFireByHandle(spawnedBuilding, "SetBuilder", "", 0, builder, this)
     }
-    printl("builder set")
 }
 function preCacheSounds()
 {
@@ -1769,6 +1776,14 @@ function respawnPlayer()
 function forceJoinTeam(team)
 {
     player.ForceChangeTeam(2, false)
+}
+::recordSTV <- function()
+{
+    local isBetterThanPR
+    local demoMarkedToSave
+    //TODO: implement
+    
+    SendToConsole("tv_stoprecord; tv_record lol")
 }
 ::ensureAlive <- function()
 {
@@ -1802,46 +1817,60 @@ function forceJoinTeam(team)
 {
     tickStopwatch = 0
 }
-
-::sendTimerMessage <- function(timerMessage = null)
+::sendObjectiveMessage <- function(objective = chosenTeleObjective, objectiveResult = objectiveResults.RESET)
 {
-    local secondsLeft = round(tickTeleTimerMax / ticksPerSecond.tofloat() - tickTeleTimer / ticksPerSecond.tofloat(),2)
-    if(secondsLeft < 0 || tickTeleTimer == 0) secondsLeft = 0
-
-    local secondsElapsed = round(tickStopwatch / ticksPerSecond.tofloat(),2)
-
-    local secondsElapsedAfterTimer = round((tickStopwatch - tickTeleTimerMax) / ticksPerSecond.tofloat(),2)
-
     local message
     //TODO: Add avg time of completion and PR
-
-    local objectiveRuns = objectiveSuccesses + objectiveFails + objectiveResets
-    local objectiveSuccesRate = round(objectiveSuccesses.tofloat() / objectiveRuns.tofloat() * 100,0)
+    local objectiveRuns = objectivePasses + objectiveFails + objectiveResets
+    local objectivePassRate = round(objectivePasses.tofloat() / objectiveRuns.tofloat() * 100,0)
     local objectiveFailRate = round(objectiveFails.tofloat() / objectiveRuns.tofloat() * 100,0)
     local objectiveResetRate = round(objectiveResets.tofloat() / objectiveRuns.tofloat() * 100,0)
 
-    local objectiveStatMessage = "^FFFFFF[^00FF00" + objectiveSuccesRate + "%^FFFFFF/^FF0000" + objectiveFailRate + "%^FFFFFF/^808080" + objectiveResetRate + "%^FFFFFF] "
+    //local objectiveStatMessage = "^FFFFFF[^00FF00" + objectivePassRate + "%^FFFFFF/^FF0000" + objectiveFailRate + "%^FFFFFF/^808080" + objectiveResetRate + "%^FFFFFF] "
 
-    switch(timerMessage)
-    {
-        case timerMessages.RAN_OUT: 
-            message = objectiveStatMessage + "^FFFFFFTimer ran out after " + secondsElapsed + "s"
+    local messageTag = "[JPRAC]"
+    local messageRunAmount = " #" + objectiveRuns + ":"
+
+    local messageResult = ""
+    switch(objectiveResult){
+        case objectiveResults.RESET: messageResult = " RESET"
             break
-        case timerMessages.OBJECTIVE_REACHED: 
-            message = objectiveStatMessage + "^FFFFFFReached objective after " + secondsElapsed + "s (^00FF00-" + secondsLeft + "s^FFFFFF)"
+        case objectiveResults.PASS: messageResult = " PASS"
             break
-        case timerMessages.OBJECTIVE_AFTER_RAN_OUT:
-            message = objectiveStatMessage + "^FFFFFFReached objective after " + secondsElapsed + "s (^FF0000+" + secondsElapsedAfterTimer + "s^FFFFFF)"
-            break
-        case timerMessages.EARLY_RESET:
-            message = objectiveStatMessage + "^FFFFFFDid not reach objective (^808080reset^FFFFFF)"
+        case objectiveResults.FAIL: messageResult = " FAIL"
             break
         default: 
-            message = objectiveStatMessage + "Elapsed " + secondsElapsed + "s and " + secondsLeft + "s left on timer"
-            break
     }
-    //TODO: Add to message with Succes / Fail / Reset (S/F/R) 
-    //local message = "^FFFFFFTimer stopped at: ^FF0000" + secondsLeft + "^FFFFFF seconds left (" + timeElapsed + " elapsed)"
+
+    local messageTime = " "
+
+    if(tickTeleTimerMax != 0) 
+    {
+        local secondsLeft
+        if(secondsLeft < 0 || tickTeleTimer == 0) secondsLeft = 0
+        else secondsLeft = round(tickTeleTimerMax / ticksPerSecond.tofloat() - tickTeleTimer / ticksPerSecond.tofloat(),2)
+
+        local secondsElapsed = round(tickStopwatch / ticksPerSecond.tofloat(),2)
+        local secondsElapsedDelta = round((tickStopwatch - tickTeleTimerMax) / ticksPerSecond.tofloat(),2)
+        
+        local averageSecondsElapsed
+        local messageAverageSecondsElapsed = ""
+        if (objectiveResult == objectiveResults.PASS || objectiveResult == objectiveResults.FAIL)
+        {
+            if(runningAverageSecondsElapsed == null) averageSecondsElapsed = secondsElapsed
+            else averageSecondsElapsed = (runningAverageSecondsElapsed * (objectivePasses +  objectiveFails - 1) + secondsElapsed) / (objectivePasses +  objectiveFails)
+            runningAverageSecondsElapsed = averageSecondsElapsed
+            averageSecondsElapsed = round(averageSecondsElapsed, 2)
+            messageAverageSecondsElapsed = " avg. " + averageSecondsElapsed + "s"
+        }
+        local textDeltaPositive = ""
+        if (secondsElapsedDelta > 0) textDeltaPositive = "+"
+ 
+        if (objectiveResult == objectiveResults.RESET) messageTime = messageTime = " @" + secondsElapsed + "s"
+        else messageTime = " @" + secondsElapsed + "s" + " (" + textDeltaPositive + secondsElapsedDelta + ")" + messageAverageSecondsElapsed
+    }
+    local message = messageTag + messageRunAmount + messageResult + messageTime
+    //local message = objectiveStatMessage + "^FFFFFFReached objective after " + secondsElapsed + "s (^FF0000+" + secondsElapsedAfterTimer + "s^FFFFFF)"
     ClientPrintSafe(null, message)
 }
 ::stopHealingTimer <- function()
@@ -1914,21 +1943,17 @@ function forceJoinTeam(team)
         use()
         return
     }
-    if(!leftMenu && !objectiveDone && chosenTeleObjective != teleObjectives.SURVIVE) 
+    if(!leftMenu && !objectiveDone && chosenTeleObjective != teleObjectives.NONE) 
     {
-        objectiveResets++
-        sendTimerMessage(timerMessages.EARLY_RESET)
+        onObjectiveEnd(chosenTeleObjective, objectiveResults.RESET)
     }
+    if(stvEnabled) recordSTV()
     
     ensureAlive()
     resetPacks()
     stopTimers()
     hasJumped = false
     objectiveDone = false
-    
-    
-
-    //TODO: Make it from on tele to on use? so even when theres no tele selected, some functions like regen will work regardless.
 
     if(chosenTele == teles.ON || chosenTele == teles.TIMED) tele(getTeleLocation(chosenTeleLocation))
     if(chosenTeleTimer > 0) startTeleTimer()
@@ -2023,6 +2048,10 @@ function forceJoinTeam(team)
 {
     if (destination == null) return
     player.Teleport(true, destination.pos, true, destination.ang, true, destination.vel)
+}
+function enableSTV()
+{
+    SendToConsole(("tv_enable 1; wait 50; changelevel " + mapName))
 }
 function saveTele1()
 {
@@ -2148,13 +2177,6 @@ function saveTele4()
         EntFireByHandle(capPoint, "SetLocked", "" + lockMatrix[pointIndex], 0, null, player)
     }
 }
-::onTeleTimerEnd <- function()
-{
-    EmitSoundEx({
-    sound_name = sounds.buttonPress, 
-    })
-    //ClientPrintSafe(null, "^FF0000Timer reached 0!^")
-}
 ::onHealingTimerEnd <- function()
 {
     if(!inOptionsMenu) 
@@ -2164,7 +2186,6 @@ function saveTele4()
 }
 ::onUberTimerStart <- function()
 {
-    printl("uber start")
     switch (chosenHealingType)
     {
         case healingType.MEDI_GUN:
@@ -2223,6 +2244,14 @@ function saveTele4()
     EntFireByHandle(teleTimerUI, "Restart", "", 0, null, this)
     
 }
+::onObjectiveEnd <- function(objective = chosenTeleObjective, objectiveResult = objectiveResults.RESET)
+{
+    if(objectiveResult == objectiveResults.PASS) objectivePasses++
+    if(objectiveResult == objectiveResults.FAIL) objectiveFails++
+    if(objectiveResult == objectiveResults.RESET) objectiveResets++
+
+    sendObjectiveMessage(objective, objectiveResult)
+}
 ::removeTeleTimerUI <- function()
 {
     if(teleTimerUI != null) 
@@ -2275,26 +2304,28 @@ function saveTele4()
 }
 ::reachedObjective <- function()
 {
-    if(!objectiveDone)
-    {
-        objectiveDone = true
-        
-        if(tickTeleTimer == 0 && tickStopwatch != 0) 
-        {
-            objectiveFails++
-            sendTimerMessage(timerMessages.OBJECTIVE_AFTER_RAN_OUT)
-        }
-        else 
-        {
-            objectiveSuccesses++
-            sendTimerMessage(timerMessages.OBJECTIVE_REACHED)
-        }
-        stopStopwatch()
+    if(objectiveDone) return
+    objectiveDone = true
 
-        EmitSoundEx({
-        sound_name = sounds.buttonPress, 
-        })
+    EmitSoundEx({
+    sound_name = sounds.buttonPress, 
+    })
+
+    if(tickTeleTimerMax == null || tickTeleTimerMax == 0)
+    {
+        onObjectiveEnd(teleObjectives.REACH, objectiveResults.PASS)
+        return
     }
+
+    if(tickTeleTimer == 0 && tickStopwatch != 0) 
+    {
+        onObjectiveEnd(teleObjectives.REACH, objectiveResults.FAIL)
+    }
+    else 
+    {
+        onObjectiveEnd(teleObjectives.REACH, objectiveResults.PASS)
+    }
+    stopStopwatch()
 }
 ::playPressSound <- function()
 {
@@ -2524,7 +2555,7 @@ function saveTele4()
 
     if(chosenTele == teles.OFF) changeTele(teles.ON)
 
-    if(toTeleObjective == teleObjectives.SURVIVE) 
+    if(toTeleObjective == teleObjectives.NONE) 
     {
         resetObjectiveStats()
     }
@@ -2534,15 +2565,6 @@ function saveTele4()
         destroyObjectiveTrigger()
         SendToConsole("ent_absbox objectiveBoundary")
     }
-    if(chosenTeleObjective == teleObjectives.REACH)
-    {
-        SendToConsole("developer 1") // TODO: find different way to show box of objective
-    }
-    if(chosenTeleObjective != teleObjectives.REACH)
-    {
-        SendToConsole("developer 0")       
-    }
-
     if(toTeleObjective == teleObjectives.REACH && objectiveBoundaries.len() == 0) ClientPrintSafe(null, "Use F9 to place a reach objective on your cursor")
 
     if(chosenTeleObjective != toTeleObjective)
@@ -2556,8 +2578,7 @@ function saveTele4()
 }
 ::resetObjectiveStats <- function()
 {
-    printl("reset")
-    objectiveSuccesses = 0
+    objectivePasses = 0
     objectiveFails = 0
     objectiveResets = 0
 }
@@ -2903,7 +2924,7 @@ function saveTele4()
 }
 ::teleObjective1 <- function()
 {
-    changeTeleObjective(teleObjectives.SURVIVE)
+    changeTeleObjective(teleObjectives.REACH)
 }
 ::teleObjective2 <- function()
 {
@@ -2911,11 +2932,11 @@ function saveTele4()
 }
 ::teleObjective3 <- function()
 {
-    changeTeleObjective(teleObjectives.REACH)
+    changeTeleObjective(teleObjectives.CAP)
 }
 ::teleObjective4 <- function()
 {
-    changeTeleObjective(teleObjectives.CAP)
+    changeTeleObjective(teleObjectives.NONE)
 }
 
 // FUNC REGION: HEALTH & HEALING CONNECT OUTPUT 
@@ -3342,7 +3363,6 @@ function createButtons(type, amount, startIndex, pos, wall)
         button.__KeyValueFromVector("mins",Vector(-bSize,-bSize,-bHeight))
         button.__KeyValueFromVector("maxs",Vector(bSize,bSize,bHeight))
         button.__KeyValueFromInt("solid", 2)
-        printl(button)
         buttons.append(button)    
     }
     return buttons
@@ -3427,13 +3447,14 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
     {
         ent.Kill()
     }
+    while (ent = Entities.FindByName(null, "objectiveFlag"))
+    {
+        ent.Kill()
+    }
     objectiveBoundaries = []
-
 }
 ::createObjectiveTrigger <- function()
 {
-    //TODO: Make best time, avg time, completion %. stuff like this for objective reach
-    //TODO: Maybe even keep a demo of best time?
     destroyObjectiveTrigger()
 
     local trace = {}
@@ -3444,8 +3465,6 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
 		ignore = player
 	}
     TraceLineEx(trace)
-
-    printl(trace.pos)
 
     local objectiveBoundary = SpawnEntityFromTable("trigger_multiple", {
             origin = trace.pos
@@ -3460,9 +3479,11 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
 
     objectiveBoundaries.append(objectiveBoundary)
 
+    //SendToConsole("ent_absbox objectiveBoundary") REPLACED with visual flag:
+    local objectiveFlag = SpawnEntityFromTable("prop_dynamic", {origin = trace.pos, angles = Vector(0, RandomInt(0, 360), 0), model = "models/props_medieval/pendant_flag/pendant_flag.mdl", targetname = "objectiveFlag", solid = 0, modelscale = 0.4, disablereceiveshadows = true})
+    objectiveFlag.SetPlaybackRate(1)
+    
     changeTeleObjective(teleObjectives.REACH)
-
-    SendToConsole("ent_absbox objectiveBoundary")
 }
 ::createOptionsMenu <- function()
 {
@@ -3698,18 +3719,12 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
     //TODO: Set saved options
 }
 
-
 // EVENT REGION: GENERAL
 
 function OnGameEvent_player_hurt(params)
 {
-    //printl("player hurt")
-    //printl(params.health)
-    //printl(params.damageamount)
-
-    ////below more reliably replaces: if (player.InCond(Constants.ETFCond.TF_COND_BLASTJUMPING)) hasJumped = true
     if(params.attacker == params.userid) hasJumped = true
-    //TODO: show this stuff somewhere in hud
+
     if(chosenHealth == health.NEGATE_DAMAGE && params.damageamount < 0) {
         player.SetHealth(params.health + params.damageamount)
     }
