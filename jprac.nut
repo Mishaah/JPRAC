@@ -1490,10 +1490,6 @@ local objectiveBoundaries = []
 
 function main()
 {
-    //TODO: Use file system to save user options
-    //StringToFile("test","content")
-    //print(FileToString("test"))
-    
     player = GetListenServerHost()
     AddThinkToEnt(player, "PlayerThink");
 
@@ -1796,8 +1792,10 @@ local DEMFileName = "JPRAC_Demo"
 
 ::lastDemoIndexFromFile <- function(demoFile)
 {
-    if(demoFile == "") return 0
+    if(demoFile == "" || demoFile == null) return 0
     local demoFileEntries = split(demoFile,demoEntrySeperator)
+    local lastDemoFileEntry = demoFileEntries.len()-1
+    if(lastDemoFileEntry < 0) lastDemoFileEntry = 0
     local index = split(demoFileEntries[(demoFileEntries.len()-1)],",")[0].slice(demoId.len()).tointeger()
     return (index)
 }
@@ -1819,11 +1817,15 @@ local DEMFileName = "JPRAC_Demo"
         demoMarkedToSave = false
     }
     SendToConsole("tv_stoprecord")
+    demoIsRecording = false
 }
 ::recordSTV <- function()
 {
     if(demoIsRecording) stopSTV()
-    SendToConsole("tv_record " + DEMFileName + (lastDemoIndexFromFile(FileToString(demoFileName))+1))
+    local demoFile = FileToString(demoFileName)
+    if(demoFile == null) StringToFile(demoFileName, "")
+    local newDemoIndex = lastDemoIndexFromFile(demoFile) + 1
+    SendToConsole("tv_record " + DEMFileName + newDemoIndex)
     demoIsRecording = true
 }
 ::ensureAlive <- function()
@@ -2095,7 +2097,7 @@ function markToSaveDemo()
     if(stvEnabled) 
     {
         if(demoMarkedToSave) stopSTV()
-        else 
+        else if (demoIsRecording)
         {
             ClientPrintSafe(null, "[JPRAC] Demo marked to save; Mark again to stop recording now.")
             demoMarkedToSave = true
