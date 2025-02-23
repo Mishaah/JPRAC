@@ -137,6 +137,10 @@ enum teams {
 
 
 // TABLE REGION
+
+local teleLocationsText = ["right spawn", "left spawn", "mid forward", "second forward", "red lobby", "red choke", "blu choke", "blu lobby", "custom 1", "custom 2"," custom 3", "custom 4", "options menu"]
+local teleObjectivesText = ["Reach", "Kill", "Cap", "None"]
+
 local gamemodes = {}
 gamemodes.koth                      <- {}
 gamemodes.koth.controls                 <- [[0],[2],[3]]
@@ -1496,6 +1500,7 @@ function main()
     selectedMap = getMap()
 
     stvEnabled = (EntIndexToHScript(2) != null)
+    if(stvEnabled) SendToConsole("tv_stoprecord")
 
     if(selectedMap == null) menuRotation = 0
     else menuRotation = selectedMap.teles.options.ang
@@ -1777,13 +1782,49 @@ function forceJoinTeam(team)
 {
     player.ForceChangeTeam(2, false)
 }
+local demoIsRecording = false
+local demoMarkedToSave
+local demoEntrySeperator = ";"
+local demoFieldSeperator = ", "
+local demoFileName = "JPRAC-saved-demos"
+local demoId = "demo: "
+local demoMapId = "map: "
+local demoTeleId = "tele: "
+local demoObjectiveId = "objective: "
+local demoTimerId = "timer: "
+local DEMFileName = "JPRAC_Demo"
+
+::lastDemoIndexFromFile <- function(demoFile)
+{
+    if(demoFile == "") return 0
+    local demoFileEntries = split(demoFile,demoEntrySeperator)
+    local index = split(demoFileEntries[(demoFileEntries.len()-1)],",")[0].slice(demoId.len()).tointeger()
+    return (index)
+}
+::stopSTV <- function()
+{
+    if(demoMarkedToSave)
+    {
+        local demoFile = FileToString(demoFileName)
+        local lastDemoIndex = lastDemoIndexFromFile(demoFile)
+        local newDemoIndex = lastDemoIndex+1
+        local entrySeperator = ""
+        if(demoFile != "") entrySeperator = demoEntrySeperator
+        local secondsElapsed
+        if(tickTeleTimerMax != 0) secondsElapsed = demoTimerId + round(tickStopwatch / ticksPerSecond.tofloat(),2) + "s"
+        local newDemoEntry = demoId + newDemoIndex + demoFieldSeperator + demoMapId + mapName + demoFieldSeperator + demoTeleId + teleLocationsText[chosenTeleLocation] + demoFieldSeperator + demoObjectiveId + teleObjectivesText[chosenTeleObjective] + demoFieldSeperator + secondsElapsed
+        
+        StringToFile(demoFileName, demoFile + entrySeperator + newDemoEntry)
+        ClientPrintSafe(null, "[JPRAC] Saved demo as " + DEMFileName + newDemoIndex)
+        demoMarkedToSave = false
+    }
+    SendToConsole("tv_stoprecord")
+}
 ::recordSTV <- function()
 {
-    local isBetterThanPR
-    local demoMarkedToSave
-    //TODO: implement
-    
-    SendToConsole("tv_stoprecord; tv_record lol")
+    if(demoIsRecording) stopSTV()
+    SendToConsole("tv_record " + DEMFileName + (lastDemoIndexFromFile(FileToString(demoFileName))+1))
+    demoIsRecording = true
 }
 ::ensureAlive <- function()
 {
@@ -1871,7 +1912,6 @@ function forceJoinTeam(team)
         else messageTime = " @" + secondsElapsed + "s" + " (^9ED57E" + textDeltaPositive + secondsElapsedDelta + "^FFFFFF)" + messageAverageSecondsElapsed
     }
     local message = messageTag + messageRunAmount + messageResult + messageTime + messageStats
-    //local message = objectiveStatMessage + "^FFFFFFReached objective after " + secondsElapsed + "s (^FF0000+" + secondsElapsedAfterTimer + "s^FFFFFF)"
     ClientPrintSafe(null, message)
 }
 ::stopHealingTimer <- function()
@@ -2049,6 +2089,19 @@ function forceJoinTeam(team)
 {
     if (destination == null) return
     player.Teleport(true, destination.pos, true, destination.ang, true, destination.vel)
+}
+function markToSaveDemo()
+{
+    if(stvEnabled) 
+    {
+        if(demoMarkedToSave) stopSTV()
+        else 
+        {
+            ClientPrintSafe(null, "[JPRAC] Demo marked to save; Mark again to stop recording now.")
+            demoMarkedToSave = true
+        }
+    }
+    else enableSTV()
 }
 function enableSTV()
 {
