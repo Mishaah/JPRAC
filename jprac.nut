@@ -1171,7 +1171,6 @@ maps.cp_unsupported.gamemode                                <- maps.cp_unsupport
 maps.cp_unsupported.teles                                   <- {}
 maps.cp_unsupported.teles.options                               <- { loc = teleLocations.OPTIONS_MENU,   pos = Vector(0     ,0     ,1000   ), ang = QAngle(0   ,180 ,0   ), vel = Vector(0,0,0)}
 
-
 local sounds = {}
 sounds.buttonPress <- "passtime/ball_intercepted.wav"
 
@@ -1235,6 +1234,18 @@ local quickfixHealrateMultiplier = 1.4
 local vaccinatorOverhealrateMultiplier = 0.666667
 
 local teleTimerUI
+
+local demoIsRecording = false
+local demoMarkedToSave
+local demoEntrySeperator = ";"
+local demoFieldSeperator = ", "
+local demoFileName = "JPRAC-saved-demos"
+local demoId = "demo: "
+local demoMapId = "map: "
+local demoTeleId = "tele: "
+local demoObjectiveId = "objective: "
+local demoTimerId = "timer: "
+local DEMFileName = "JPRAC_Demo"
 
 // VAR REGION: BUTTON PARAMETERS
 local bSize = 20
@@ -1778,18 +1789,6 @@ function forceJoinTeam(team)
 {
     player.ForceChangeTeam(2, false)
 }
-local demoIsRecording = false
-local demoMarkedToSave
-local demoEntrySeperator = ";"
-local demoFieldSeperator = ", "
-local demoFileName = "JPRAC-saved-demos"
-local demoId = "demo: "
-local demoMapId = "map: "
-local demoTeleId = "tele: "
-local demoObjectiveId = "objective: "
-local demoTimerId = "timer: "
-local DEMFileName = "JPRAC_Demo"
-
 ::lastDemoIndexFromFile <- function(demoFile)
 {
     if(demoFile == "" || demoFile == null) return 0
@@ -2598,11 +2597,13 @@ function saveTele4()
 
     if(chosenTeleLocation != toTeleLocation)
     {
-        //TODO FIX BUG: 1388 bDisable the index 8 does not exist
-        bEnableOptionsCategory(optionsGroupTeleLocation)
-        bEnableOptionsTextCategory(optionsTextsGroupTeleLocation)
-        bDisable(optionsGroupTeleLocation[toTeleLocation])
-        bTextDisable(optionsTextsGroupTeleLocation[toTeleLocation])
+        if(inOptionsMenu)
+        {
+            bEnableOptionsCategory(optionsGroupTeleLocation)
+            bEnableOptionsTextCategory(optionsTextsGroupTeleLocation)
+            bDisable(optionsGroupTeleLocation[toTeleLocation])
+            bTextDisable(optionsTextsGroupTeleLocation[toTeleLocation])
+        }
         chosenTeleLocation = toTeleLocation
     }
 }
