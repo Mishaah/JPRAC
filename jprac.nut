@@ -1,3 +1,5 @@
+ClearGameEventCallbacks() //clear any previous event callbacks, can however mess up compatibility with other scripts.
+
 // ENUM REGION: TELE
 enum teles {
     ON,
@@ -3811,19 +3813,236 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
 local chatCommandIndicator = '!'
 local msg
 
+::CallFunctionFromString <- function(str, player)
+{
+    switch(str)
+    {
+        case "tele1": tele1()
+        break
+        case "tele2": tele2()
+        break
+        case "tele3": tele3()
+        break
+        case "tele4": tele4()
+        break
+        case "teleLocation1": teleLocation1()
+        break
+        case "teleLocation2": teleLocation2()
+        break
+        case "teleLocation3": teleLocation3()
+        break
+        case "teleLocation4": teleLocation4()
+        break
+        case "teleLocation5": teleLocation5()
+        break
+        case "teleLocation6": teleLocation6()
+        break
+        case "teleLocation7": teleLocation7()
+        break
+        case "teleLocation8": teleLocation8()
+        break
+        case "teleLocation9": teleLocation9()
+        break
+        case "teleLocation10": teleLocation10()
+        break
+        case "teleLocation11": teleLocation11()
+        break
+        case "teleLocation12": teleLocation12()
+        break
+        case "teleTimer1": teleTimer1()
+        break
+        case "teleTimer2": teleTimer2()
+        break
+        case "teleTimer3": teleTimer3()
+        break
+        case "teleTimer4": teleTimer4()
+        break
+        case "teleObjective1": teleObjective1()
+        break
+        case "teleObjective2": teleObjective2()
+        break
+        case "teleObjective3": teleObjective3()
+        break
+        case "teleObjective4": teleObjective4()
+        break
+        case "health1": health1()
+        break
+        case "health2": health2()
+        break
+        case "health3": health3()
+        break
+        case "health4": health4()
+        break
+        case "healthRegen1": healthRegen1()
+        break
+        case "healthRegen2": healthRegen2()
+        break
+        case "healthRegen3": healthRegen3()
+        break
+        case "healthRegen4": healthRegen4()
+        break
+        case "healthRegenAdd1": healthRegenAdd1()
+        break
+        case "healthRegenAdd2": healthRegenAdd2()
+        break
+        case "healthRegenAdd3": healthRegenAdd3()
+        break
+        case "healthRegenAdd4": healthRegenAdd4()
+        break
+        case "healing1": healing1()
+        break
+        case "healing2": healing2()
+        break
+        case "healing3": healing3()
+        break
+        case "healing4": healing4()
+        break
+        case "healingType1": healingType1()
+        break
+        case "healingType2": healingType2()
+        break
+        case "healingType3": healingType3()
+        break
+        case "healingType4": healingType4()
+        break
+        case "healingLength1": healingLength1()
+        break
+        case "healingLength2": healingLength2()
+        break
+        case "healingLength3": healingLength3()
+        break
+        case "healingLength4": healingLength4()
+        break
+        case "uber1": uber1()
+        break
+        case "uber2": uber2()
+        break
+        case "uber3": uber3()
+        break
+        case "uber4": uber4()
+        break
+        case "uberLength1": uberLength1()
+        break
+        case "uberLength2": uberLength2()
+        break
+        case "uberLength3": uberLength3()
+        break
+        case "uberLength4": uberLength4()
+        break
+        case "ammo1": ammo1()
+        break
+        case "ammo2": ammo2()
+        break
+        case "ammo3": ammo3()
+        break
+        case "ammo4": ammo4()
+        break
+        case "ammoType1": ammoType1()
+        break
+        case "ammoType2": ammoType2()
+        break
+        case "ammoType3": ammoType3()
+        break
+        case "ammoType4": ammoType4()
+        break
+        case "ammoRegen1": ammoRegen1()
+        break
+        case "ammoRegen2": ammoRegen2()
+        break
+        case "ammoRegen3": ammoRegen3()
+        break
+        case "ammoRegen4": ammoRegen4()
+        break
+        case "ammoRegenAdd1": ammoRegenAdd1()
+        break
+        case "ammoRegenAdd2": ammoRegenAdd2()
+        break
+        case "ammoRegenAdd3": ammoRegenAdd3()
+        break
+        case "ammoRegenAdd4": ammoRegenAdd4()
+        break
+        case "bot1": bot1()
+        break
+        case "bot2": bot2()
+        break
+        case "bot3": bot3()
+        break
+        case "bot4": bot4()
+        break
+        case "botSetup1": botSetup1()
+        break
+        case "botSetup2": botSetup2()
+        break
+        case "botSetup3": botSetup3()
+        break
+        case "botSetup4": botSetup4()
+        break
+        case "botSetup5": botSetup5()
+        break
+        case "botSetup6": botSetup6()
+        break
+        case "botSetup7": botSetup7()
+        break
+        case "botSetup8": botSetup8()
+        break
+        case "botSetup9": botSetup9()
+        break
+        case "botSetup10": botSetup10()
+        break
+        case "botSetup11": botSetup11()
+        break
+        case "botSetup12": botSetup12()
+        break
+        case "cap1": cap1()
+        break
+        case "cap2": cap2()
+        break
+        case "capAdd1": capAdd1()
+        break
+        case "capAdd2": capAdd2()
+        break
+        case "lock1": lock1()
+        break
+        case "lock2": lock2()
+        break
+        case "lock3": lock3()
+        break
+        case "lock4": lock4()
+        break
+        case "use": use()
+        break
+        case "toggleOptionsMenu": toggleOptionsMenu()
+        break
+        case "saveTele1": saveTele1()
+        break
+        case "saveTele2": saveTele2()
+        break
+        case "saveTele3": saveTele3()
+        break
+        case "saveTele4": saveTele4()
+        break
+        case "createObjectiveTrigger": createObjectiveTrigger()
+        break
+        case "markToSaveDemo": markToSaveDemo()
+        break
+        default: return
+    }
+}
+
 function OnGameEvent_player_say(params)
 {
-    printl(params)
     msg = params.text
     if (msg[0] != chatCommandIndicator) return
 
     local cmd = msg.slice(1)
 
-    printl("command" + cmd)
-}
+    local player = GetPlayerFromUserID(params.userid)
 
+    CallFunctionFromString(cmd, player)
+}
 function OnGameEvent_player_hurt(params)
 {
+    printl("hurt")
     if(params.attacker == params.userid) hasJumped = true
 
     if(chosenHealth == health.NEGATE_DAMAGE && params.damageamount < 0) {
