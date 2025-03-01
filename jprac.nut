@@ -1206,6 +1206,9 @@ local builder = null
 local spawnedBuildings = []
 ::playerCount <- MaxClients().tointeger() 
 
+local enableTimerBar = false
+local timerBar
+
 local ticksPerSecond = 66
 
 local tickTimerRoundRestart = 0
@@ -1499,6 +1502,7 @@ local optionsTextsGroupLock =           []
 local menuBoundaries = []
 local objectiveBoundaries = []
 
+
 function main()
 {
     player = GetListenServerHost()
@@ -1521,10 +1525,11 @@ function main()
     preCacheSounds()
 
     ClientPrintSafe(null, "JPRAC LOADED")
-    
+
+    if(enableTimerBar) timerBar = Entities.FindByClassname(null, "monster_resource")
+
     // TODO?: Show on hud with small symbols what options are selected. Like a little clock if timer is on, timer turns red when times up
 }
-
 // FUNC REGION: UTILITY
 ::ClientPrintSafe <- function(player, text)
 {
@@ -1590,7 +1595,7 @@ function main()
     {
         tickTeleTimer++
     }
-    if (tickTeleTimer == tickTeleTimerMax && tickTeleTimerMax != 0)
+    if (tickTeleTimer == tickTeleTimerMax && tickTeleTimerMax != 0 && tickTeleTimerMax != null)
     {
         if(chosenTeleObjective == teleObjectives.NONE) onObjectiveEnd(chosenTeleObjective, objectiveResults.FAIL)
         stopTeleTimer()
@@ -1642,7 +1647,25 @@ function main()
         stopUberTimer()
         onUberTimerEnd()
     }
+    if (timerBar && tickTeleTimerMax != 0 && tickTeleTimerMax != null) 
+    {
+        local timerProgress = (tickTeleTimerMax.tofloat() - tickTeleTimer.tofloat()) / tickTeleTimerMax.tofloat()
+        local progressBytePercentage = max(min(round(timerProgress * 255, 0),255),0)
+        NetProps.SetPropInt(timerBar, "m_iBossHealthPercentageByte", progressBytePercentage)
+    }
+    if(!enableTimerBar && timerBar) NetProps.SetPropInt(timerBar, "m_iBossHealthPercentageByte", 0)
+
 	return -1
+}
+::max <- function(x, y)
+{
+    if(x > y) return x
+    return y
+}
+::min <- function(x, y)
+{
+    if(x > y) return y
+    return x
 }
 ::round <- function(val, decimalPoints) 
 {
@@ -1808,7 +1831,7 @@ function forceJoinTeam(team)
         local entrySeperator = ""
         if(demoFile != "") entrySeperator = demoEntrySeperator
         local secondsElapsed
-        if(tickTeleTimerMax != 0) secondsElapsed = demoTimerId + round(tickStopwatch / ticksPerSecond.tofloat(),2) + "s"
+        if(tickTeleTimerMax != 0 && tickTeleTimerMax != null) secondsElapsed = demoTimerId + round(tickStopwatch / ticksPerSecond.tofloat(),2) + "s"
         local newDemoEntry = demoId + newDemoIndex + demoFieldSeperator + demoMapId + mapName + demoFieldSeperator + demoTeleId + teleLocationsText[chosenTeleLocation] + demoFieldSeperator + demoObjectiveId + teleObjectivesText[chosenTeleObjective] + demoFieldSeperator + secondsElapsed
         
         StringToFile(demoFileName, demoFile + entrySeperator + newDemoEntry)
@@ -1887,8 +1910,9 @@ function forceJoinTeam(team)
 
     local messageTime = " "
 
-    if(tickTeleTimerMax != 0) 
+    if(tickTeleTimerMax != 0 && tickTeleTimerMax != null) 
     {
+        printl(tickTeleTimerMax)
         local secondsLeft
         if(secondsLeft < 0 || tickTeleTimer == 0) secondsLeft = 0
         else secondsLeft = round(tickTeleTimerMax / ticksPerSecond.tofloat() - tickTeleTimer / ticksPerSecond.tofloat(),2)
@@ -3783,6 +3807,20 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
 }
 
 // EVENT REGION: GENERAL
+
+local chatCommandIndicator = '!'
+local msg
+
+function OnGameEvent_player_say(params)
+{
+    printl(params)
+    msg = params.text
+    if (msg[0] != chatCommandIndicator) return
+
+    local cmd = msg.slice(1)
+
+    printl("command" + cmd)
+}
 
 function OnGameEvent_player_hurt(params)
 {
