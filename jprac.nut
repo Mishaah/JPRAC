@@ -1,6 +1,5 @@
-ClearGameEventCallbacks() //clear any previous event callbacks, can however mess up compatibility with other scripts.
+ClearGameEventCallbacks()
 
-// ENUM REGION: TELE
 enum teles {
     ON,
     TIMED,
@@ -28,18 +27,34 @@ enum teleObjectives {
     CAP,
     NONE,
 }
+enum teleTimerControls {
+    PLUS_TEN,
+    PLUS_ONE,
+    MINUS_ONE,
+    MINUS_FIVE,
+}
 enum objectiveResults {
     RESET,
     PASS,
     FAIL,
 }
-
-// ENUM REGION: HEALTH & HEALING
 enum health {
     ON_TELE,
     NEGATE_DAMAGE,
     PREVENT_DAMAGE,
     OFF,
+}
+enum healthRegen {
+    FIVE_HUNDRED,
+    HUNDRED_FIFTY,
+    HUNDRED,
+    FIFTY
+}
+enum healthRegenAdd {
+    PLUS_FIFTY,
+    PLUS_TEN
+    MINUS_TEN,
+    MINUS_FIFTY,
 }
 enum healing {
     ON_TELE,
@@ -53,13 +68,23 @@ enum healingType {
     QUICK_FIX,
     VACCINATOR,
 }
-
-// ENUM REGION: UBER & AMMO
+enum healingTimerControls {
+    PLUS_TEN,
+    PLUS_ONE,
+    MINUS_ONE,
+    MINUS_FIVE,
+}
 enum uber {
     ON_TELE,
     UNTIL_JUMP,
     INFINITE,
     OFF,
+}
+enum uberTimerControls {
+    PLUS_EIGHT,
+    PLUS_ONE,
+    MINUS_ONE,
+    MINUS_FIVE,
 }
 enum ammo {
     ON_TELE,
@@ -73,8 +98,18 @@ enum ammoType {
     CLIP,
     CLIP_ONLY,
 }
-
-// ENUM REGION: BOTS & CAPS
+enum ammoRegen {
+    HUNDRED,
+    SEVENTY_FIVE,
+    FIFTY,
+    TWENTY_FIVE,
+}
+enum ammoRegenAdd {
+    PLUS_FOURTH,
+    PLUS_SIXTEENTH,
+    MINUS_SIXTEENTH,
+    MINUS_EIGHTH,
+}
 enum bots {
     NORMAL,
     HARD,
@@ -99,21 +134,22 @@ enum caps {
     DEFAULT,
     OVERRIDE,
 }
+enum capsAdd {
+    PLUS_ONE,
+    MINUS_ONE,
+}
 enum locks {
     DEFAULT,
     ALL,
     ATTACK,
     DEFEND,
 }
-
-// ENUM REGION: GENERAL
 enum buildings {
     SENTRY,
     DISPENSER,
     TELE_ENTRANCE,
     TELE_EXIT,
 }
-
 enum mercs {
     UNDEFINED,
     SCOUT,
@@ -129,19 +165,29 @@ enum mercs {
     COUNT_ALL,
     RANDOM,
 }
-
 enum teams {
     SPECTATOR,
     PVE_DEFENDERS,
     RED,
     BLUE,
 }
+enum optionsGroupTypes{
+    RADIO,
+    CHECK,
+    CLICK,
+}
 
+local scripts = ["jprac2"]
+
+function IncludeScripts(toIncludeScripts)
+{
+    foreach(script in toIncludeScripts)
+    {
+        IncludeScript(script)
+    }
+}
 
 // TABLE REGION
-
-local teleLocationsText = ["right spawn", "left spawn", "mid forward", "second forward", "red lobby", "red choke", "blu choke", "blu lobby", "custom 1", "custom 2"," custom 3", "custom 4", "options menu"]
-local teleObjectivesText = ["Reach", "Kill", "Cap", "None"]
 
 local gamemodes = {}
 gamemodes.koth                      <- {}
@@ -1176,401 +1222,673 @@ maps.cp_unsupported.teles.options                               <- { loc = teleL
 local sounds = {}
 sounds.buttonPress <- "passtime/ball_intercepted.wav"
 
+// ARRAY REGION: GENERAL
 
-// VAR REGION: GENERAL
-local host
-local player //DELETE THIS
-local attackPressed = false
-local hasJumped = false
-local mapName
-local selectedMap
-local selectedGamemode
-local inOptionsMenu = false
-local optionsMenuExists = false
-local menuRotation
-local leftMenu = false
-local stvEnabled
-
-local objectiveDone = false
-local objectivePasses = 0
-local objectiveFails = 0
-local objectiveResets = 0
-
-local posBeforeMenu = Vector(0,0,0)
-local angBeforeMenu = QAngle(0,0,0)
-local velBeforeMenu = Vector(0,0,0)
-local destBeforeMenu = { pos = posBeforeMenu, ang = angBeforeMenu, vel = velBeforeMenu }
-
-local regenPacks = []
-local packsAreAutoMaterializing = true
-local capPoints = []
-local botGenerators = []
-local builder = null
-local spawnedBuildings = []
-::playerCount <- MaxClients().tointeger()
-local players = []
-
-local enableTimerBar = false
-local timerBar
-
-local ticksPerSecond = 66
-
-local tickTimerRoundRestart = 0
-local tickTimerRoundRestartMax = ticksPerSecond * 5
-
-local tickTeleTimer = 0
-local tickTeleTimerMax
-
-local runningAverageSecondsElapsed
-
-local tickStopwatch = 0
-
-local tickHealingTimer = 0
-local tickHealingTimerMax
-local healPerTick
-local overhealPerTick
-local tickHealingHealed = 0
-
-local tickUberTimer = 0
-local tickUberTimerMax
-
-local standardOverhealMax = 1.5
-local quickfixOverhealMax = 1.25
-local standardHealrate = 24.0
-local quickfixHealrateMultiplier = 1.4
-local vaccinatorOverhealrateMultiplier = 0.666667
-
-local teleTimerUI
-
-local demoIsRecording = false
-local demoMarkedToSave
-local demoEntrySeperator = ";"
-local demoFieldSeperator = ", "
-local demoFileName = "JPRAC-saved-demos"
-local demoId = "demo: "
-local demoMapId = "map: "
-local demoTeleId = "tele: "
-local demoObjectiveId = "objective: "
-local demoTimerId = "timer: "
-local DEMFileName = "JPRAC_Demo"
-
-local chatCommandIndicator = '!'
-
-// VAR REGION: BUTTON PARAMETERS
-local bSize = 20
-local bHeight = 17
-
-local bWallOffsetX = -90
-local bWallOffsetY = 56
-local bWallOffsetZ = 300
-local bOffsetX = 53.75
-local bOffsetY = -42
-
-local bWallTextOffsetX = -109
-local bWallTextOffsetY = 54
-local bWallTextOffsetZ = 320
-local bTextOffsetX = 53.75
-local bTextOffsetY = -42
-local bTextLetterOffset = 5
-local bTextLineOffset = 4
-local bTextLineCharLimit = 8
-
-local textOffRedColor =      "255 210 170"
-local textOffWhiteColor =    "255 240 240"
-local textHighlightedColor = "255 255 50"
-
-// VAR REGION: TELE BUTTON MESSAGES
-local teleMessages = [
-    "ON",
-    "TIMED",
-    "ROUND\nRESTART",
-    "OFF",
-]
-local teleLocationMessages = [
-    "RIGHT\nSPAWN",
-    "LEFT\nSPAWN",
-    "MID\nFORWARD",
-    "SECOND\nFORWARD",
-    "OUR\nLOBBY",
-    "OUR\nCHOKE",
-    "THEIR\nCHOKE",
-    "THEIR\nLOBBY",
-    "CUSTOM\n  #1",
-    "CUSTOM\n  #2",
-    "CUSTOM\n  #3",
-    "CUSTOM\n  #4",
-]
-local teleObjectiveMessages = [
-    "REACH",
-    "KILL",
-    "CAP",
-    "NONE",
-]
-local teleTimerMessages = [
-    "+10s",
-    "+1s",
-    "-1s",
-    "-5s",
-]
-
-// VAR REGION: HEALTH & HEALING BUTTON MESSAGES
-local healthMessages = [
-    " ON\nTELE",
-    "NEGATE\nDAMAGE",
-    "PREVENT\nDAMAGE",
-    "OFF",
-]
-local healthRegenMessages = [
-    "500%",
-    "150%",
-    "100%",
-    "50%",
-]
-local healthRegenAddMessages = [
-    "+50%",
-    "+10%",
-    "-10%",
-    "-50%",
-]
-local healingMessages = [
-    " ON\nTELE",
-    "UNTIL\nJUMP",
-    "INFINITE",
-    "OFF",
-]
-local healingTypeMessages = [
-    "MEDI",
-    "KRITZ",
-    "QUICK",
-    "VACC",
-]
-local healingTimerMessages = [
-    "+10s",
-    "+1s",
-    "-1s",
-    "-5s",
-]
-
-// VAR REGION: UBER & AMMO BUTTON MESSAGES
-local uberMessages = [
-    " ON\nTELE",
-    "UNTIL\nJUMP",
-    "INFINITE",
-    "OFF",
-]
-local uberTimerMessages = [
-    "+8s",
-    "+1s",
-    "-1s",
-    "-5s",
-]
-local ammoMessages = [
-    " ON\nTELE",
-    "  ON\nATTACK",
-    "INFINITE",
-    "OFF",
-]
-local ammoTypeMessages = [
-    "TOTAL",
-    "RESERVE",
-    "CLIP",
-    "CLIP\nONLY",
-]
-local ammoRegenMessages = [
-    "100%",
-    "75%",
-    "50%",
-    "25%",
-]
-local ammoRegenAddMessages = [
-    "+25%",
-    "+6.25%",
-    "-6.25%",
-    "-12.5%",
-]
-
-// VAR REGION: BOTS & CAPS BUTTON MESSAGES
-local botMessages = [
-    "NORMAL",
-    "HARD",
-    "EXPERT",
-    "OFF",
-]
-local botSetupMessages = [
-    "OUR\nSECOND",
-    "MIDDLE",
-    "SECOND",
-    "LAST",
-    "ROLLOUT\n  #1",
-    "ROLLOUT\n  #2",
-    "ROLLOUT\n  #3",
-    "ROLLOUT\n  #4",
-    "CUSTOM\n  #1",
-    "CUSTOM\n  #2",
-    "CUSTOM\n  #3",
-    "CUSTOM\n  #4",
-]
-local capMessages = [
-    "DEFAULT",
-    "OVERRIDE",
-]
-local capAddMessages = [
-    "+1 CAP",
-    "-1 CAP",
-]
-local lockMessages = [
-    "DEFAULT",
-    "ALL",
-    "ATTACK",
-    "DEFEND",
-]
-
-// VAR REGION: OPTIONS
-local chosenTele
-local chosenTeleLocation
-local chosenTeleTimer
-local chosenTeleObjective
-
-local chosenHealth
-local chosenHealthRegen
-local chosenHealing
-local chosenHealingType
-local chosenHealingTimer
-
-local currentDamageMultiplier
-
-local chosenUber
-local chosenUberTimer
-local chosenAmmo
-local chosenAmmoType
-local chosenAmmoRegen
-
-local chosenBot
-local chosenBotSetup
-local chosenCaps
-local chosenCapsAmount
-local chosenLocks
-
-local optionsGroups = []
-
-local optionsGroupTele =            []
-local optionsGroupTeleLocation =    []
-local optionsGroupTeleTimer =       []
-local optionsGroupTeleObjective =   []
-
-local optionsGroupHealth =          []
-local optionsGroupHealthRegen =     []
-local optionsGroupHealthRegenAdd =  []
-local optionsGroupHealing =         []
-local optionsGroupHealingType =     []
-local optionsGroupHealingTimer =    []
-
-local optionsGroupUber =            []
-local optionsGroupUberTimer =       []
-local optionsGroupAmmo =            []
-local optionsGroupAmmoType =        []
-local optionsGroupAmmoRegen =       []
-local optionsGroupAmmoRegenAdd =    []
-
-local optionsGroupBot =             []
-local optionsGroupBotSetup =        []
-local optionsGroupCap =             []
-local optionsGroupCapAdd =          []
-local optionsGroupLock =            []
-
-local optionsTextsGroups = []
-
-local optionsTextsGroupTele =           []
-local optionsTextsGroupTeleLocation =   []
-local optionsTextsGroupTeleTimer =      []
-local optionsTextsGroupTeleObjective =  []
-
-local optionsTextsGroupHealth =         []
-local optionsTextsGroupHealthRegen =    []
-local optionsTextsGroupHealthRegenAdd = []
-local optionsTextsGroupHealing =        []
-local optionsTextsGroupHealingType =    []
-local optionsTextsGroupHealingTimer =   []
-
-local optionsTextsGroupUber =           []
-local optionsTextsGroupUberTimer =      []
-local optionsTextsGroupAmmo =           []
-local optionsTextsGroupAmmoType =       []
-local optionsTextsGroupAmmoRegen =      []
-local optionsTextsGroupAmmoRegenAdd =   []
-
-local optionsTextsGroupBot =            []
-local optionsTextsGroupBotSetup =       []
-local optionsTextsGroupCap =            []
-local optionsTextsGroupCapAdd =         []
-local optionsTextsGroupLock =           []
+//local teleLocationsText = ["right spawn", "left spawn", "mid forward", "second forward", "red lobby", "red choke", "blu choke", "blu lobby", "custom 1", "custom 2"," custom 3", "custom 4", "options menu"]
+//local teleObjectivesText = ["Reach", "Kill", "Cap", "None"]
 
 local menuBoundaries = []
 local objectiveBoundaries = []
 
+// CLASS REGION
 
-::GetPlayers <- function()
+class _Timer 
 {
-    local players = []
+    static ticksPerSecond = 66
+    elapsedTicks = null
+    maxTicks = null
 
-    for(local index = 0; index < playerCount; index++)
+    constructor(seconds, startingTick = 0)
     {
-        local player = PlayerInstanceFromIndex(index)
-        if(player)
-            players.append(player)
+        maxTicks = seconds * ticksPerSecond
+        elapsedTicks = startingTick
     }
-    printl("playercount: " + players.len())
-    return players
-}
-class _player
-{
-    constructor(entity)
+    function start(seconds)
+    {
+
+    }
+    function stop()
+    {
+
+    }
+    function update(seconds)
+    {
+
+    }
+    function destroy()
     {
         
     }
+}
+class _HUDTimer extends _Timer
+{
     entity = null
 
+    constructor(timerEntity)
+    {
+        entity = timerEntity
+    }
 }
+class _HUDBar
+{
+    entity = null
+
+    constructor(barEntity)
+    {
+        entity = barEntity
+    }
+    function update(percentage)
+    {
+
+    }
+    function destroy()
+    {
+        
+    }
+}
+class _RoundRestartTimer extends _Timer
+{
+    constructor()
+    {
+
+    }
+}
+class _HealingTimer extends _Timer
+{
+    healPerTick = null
+    overhealPerTick = null
+    tickHealingHealed = null
+
+    constructor(timerHealPerTick = 0, timerOverHealPerTick = 0, timerTickHealingHealed = 0)
+    {
+        healPerTick = timerHealPerTick
+        overhealPerTick = timerOverHealPerTick
+        tickHealingHealed = timerTickHealingHealed
+    }
+}
+class _UberTimer extends _Timer
+{
+    constructor()
+    {
+        
+    }
+}
+class _DemoRecorder
+{
+    Timer = null
+
+    demoIsRecording = null
+    demoMarkedToSave = null
+
+    static demoEntrySeperator = ";"
+    static demoFieldSeperator = ", "
+    static demoFileName = "JPRAC-saved-demos"
+    static demoId = "demo: "
+    static demoMapId = "map: "
+    static demoTeleId = "tele: "
+    static demoObjectiveId = "objective: "
+    static demoTimerId = "timer: "
+    static DEMFileName = "JPRAC_Demo"
+
+    constructor(timer = null)
+    {
+        Timer = timer
+        demoIsRecording = false
+        demoMarkedToSave = false
+    }
+}
+class _Destination
+{
+    pos = null
+    ang = null
+    vel = null
+
+    constructor(destinationPos, destinationAng, destinationVol)
+    {
+        pos = destinationPos
+        ang = destinationAng
+        vel = destinationVol
+    }
+}
+class _Attempt
+{
+    Timer = null
+    result = null
+
+    constructor(timer = null)
+    {
+        Timer = timer
+    }
+}
+class _Objective
+{
+    type = null
+    objectiveDone = null
+    currentAttempt = null
+    previousAttempts = null
+
+    constructor(objectiveType, timer = null)
+    {
+        type = objectiveType
+        Timer = timer
+        objectiveDone = false
+        previousAttempts = []
+    }
+    function getAttempts(result = null)
+    {
+        if(result == null) 
+            return previousAttempts
+
+        filteredAttempts = []
+        foreach(attempt in previousAttempts)
+        {
+            if(result == attempt.result) 
+                filteredAttempts.append(attempt)
+        }
+        return filteredAttempts
+    }
+    function getRunningAverageTime(result = null)
+    {
+        totalTicks = 0
+        
+        attempts = getAttempts(result)
+        attemptCount = attempts.len()
+
+        foreach(attempt in attempts)
+        {
+            totalTicks += attempt.Timer.elapsedTicks
+        }
+
+        return attemptCount / totalTime
+    }
+}
+class _Option
+{
+    id = null
+    state = null
+    name = ""
+
+    constructor(optionId, optionName = null, optionState = false)
+    {
+        id = optionId
+        if(optionName)
+            name = optionName
+        else
+            name = id.tostring()
+        state = optionState
+    }
+    function changeState(toState)
+    {
+        state = toState
+    }
+}
+class _OptionsGroup
+{
+    Options = null
+    optionsGroupType = null
+    optionsGroupDefault = null
+
+    constructor(groupOptions, groupType, groupDefault = null)
+    {
+        Options = groupOptions
+        optionsGroupType = groupType
+        optionsGroupDefault = groupDefault
+    }
+    function getOptions(state = null)
+    {
+        if(state == null)
+            return Options
+
+        filteredOptions = []
+        foreach(option in Options)
+        {
+            if(option.state == state)
+            {
+                filteredOptions.append(option)
+            }
+        }
+        return filteredOptions
+    }
+    function enableDefault()
+    {
+        if(optionsGroupType = optionsGroupTypes.RADIO) return
+
+        foreach(option in Options)
+        {
+            changeState(option.id == optionsGroupDefault)
+        }
+    }
+}
+class _PlayerOptions
+{
+    chosenTele          = null
+    chosenTeleLocation  = null
+    chosenTeleTimer     = null
+    chosenTeleObjective = null
+    chosenHealth        = null
+    chosenHealthRegen   = null
+    chosenHealing       = null
+    chosenHealingType   = null
+    chosenHealingTimer  = null
+    chosenUber          = null
+    chosenUberTimer     = null
+    chosenAmmo          = null
+    chosenAmmoType      = null
+    chosenAmmoRegen     = null
+    chosenBot           = null
+    chosenBotSetup      = null
+    chosenCaps          = null
+    chosenCapsAmount    = null
+    chosenLocks         = null
+
+    OptionsGroupTele = null
+    OptionsGroupTeleLocation = null
+    OptionsGroupTeleTimer = null
+    OptionsGroupTeleObjective = null
+    OptionsGroupHealth = null
+    OptionsGroupHealthRegen = null
+    OptionsGroupHealthRegenAdd = null
+    OptionsGroupHealing = null
+    OptionsGroupHealingType = null
+    OptionsGroupHealingTimer = null
+    OptionsGroupUber = null
+    OptionsGroupUberTimer = null
+    OptionsGroupAmmo = null
+    OptionsGroupAmmoType = null
+    OptionsGroupAmmoRegen = null
+    OptionsGroupAmmoRegenAdd = null
+    OptionsGroupBot = null
+    OptionsGroupBotSetup = null
+    OptionsGroupCap = null
+    OptionsGroupCapAdd = null
+    OptionsGroupLock = null
+
+    constructor()
+    {
+        OptionsGroupTele =           _OptionsGroup([_Option(teles.ON,                       "ON"),
+                                                    _Option(teles.TIMED,                    "TIMED"),
+                                                    _Option(teles.ROUND_RESTART,            "ROUND\nRESTART"),
+                                                    _Option(teles.OFF,                      "OFF")],
+                                                    optionsGroupTypes.RADIO,
+                                                    teles.ON)
+        OptionsGroupTeleLocation =   _OptionsGroup([_Option(teleLocations.RIGHT_SPAWN,     "RIGHT\nSPAWN"),
+                                                    _Option(teleLocations.LEFT_SPAWN,      "LEFT\nSPAWN"),
+                                                    _Option(teleLocations.MID_FORWARD,     "MID\nFORWARD"),
+                                                    _Option(teleLocations.SECOND_FORWARD,  "SECOND\nFORWARD"),
+                                                    _Option(teleLocations.OUR_LOBBY,       "OUR\nLOBBY"),
+                                                    _Option(teleLocations.OUR_CHOKE,       "OUR\nCHOKE"),
+                                                    _Option(teleLocations.THEIR_CHOKE,     "THEIR\nCHOKE"),
+                                                    _Option(teleLocations.THEIR_LOBBY,     "THEIR\nLOBBY"),
+                                                    _Option(teleLocations.CUSTOM_1,        "CUSTOM\n  #1"),
+                                                    _Option(teleLocations.CUSTOM_2,        "CUSTOM\n  #2"),
+                                                    _Option(teleLocations.CUSTOM_3,        "CUSTOM\n  #3"),
+                                                    _Option(teleLocations.CUSTOM_4,        "CUSTOM\n  #4")],
+                                                    optionsGroupTypes.RADIO,
+                                                    teleLocations.RIGHT_SPAWN)
+        OptionsGroupTeleTimer =      _OptionsGroup([_Option(teleTimerControls.PLUS_TEN,     "+10"),
+                                                    _Option(teleTimerControls.PLUS_ONE,     "+1"),
+                                                    _Option(teleTimerControls.MINUS_ONE,    "-1"),
+                                                    _Option(teleTimerControls.MINUS_FIVE,   "-5")],
+                                                    optionsGroupTypes.CLICK)
+        OptionsGroupTeleObjective =  _OptionsGroup([_Option(teleObjectives.REACH,           "REACH"),
+                                                    _Option(teleObjectives.KILL,            "KILL"),
+                                                    _Option(teleObjectives.CAP,             "CAP"),
+                                                    _Option(teleObjectives.NONE,            "NONE")],
+                                                    optionsGroupTypes.RADIO,
+                                                    teleObjectives.NONE)
+        OptionsGroupHealth =         _OptionsGroup([_Option(health.ON_TELE,                 " ON\nTELE"),
+                                                    _Option(health.NEGATE_DAMAGE,           "NEGATE\nDAMAGE"),
+                                                    _Option(health.PREVENT_DAMAGE,          "PREVENT\nDAMAGE"),
+                                                    _Option(health.OFF,                     "OFF")],
+                                                    optionsGroupTypes.RADIO,
+                                                    health.ON_TELE)
+        OptionsGroupHealthRegen =    _OptionsGroup([_Option(healthRegen.FIVE_HUNDRED,       "500%"),
+                                                    _Option(healthRegen.HUNDRED_FIFTY,      "150%"),
+                                                    _Option(healthRegen.HUNDRED,            "100%"),
+                                                    _Option(healthRegen.FIFTY,              "50%")],
+                                                    optionsGroupTypes.RADIO,
+                                                    healthRegen.HUNDRED)
+        OptionsGroupHealthRegenAdd = _OptionsGroup([_Option(healthRegenAdd.PLUS_FIFTY,      "+50%"),
+                                                    _Option(healthRegenAdd.PLUS_TEN,        "+10%"),
+                                                    _Option(healthRegenAdd.MINUS_TEN,       "-10%"),
+                                                    _Option(healthRegenAdd.MINUS_FIFTY,     "-50%")],
+                                                    optionsGroupTypes.CLICK)
+        OptionsGroupHealing =        _OptionsGroup([_Option(healing.ON_TELE,                " ON\nTELE"),
+                                                    _Option(healing.UNTIL_JUMP,             "UNTIL\nJUMP"),
+                                                    _Option(healing.INFINITE,               "INFINITE"),
+                                                    _Option(healing.OFF,                    "OFF")],
+                                                    optionsGroupTypes.RADIO,
+                                                    healing.OFF)
+        OptionsGroupHealingType =    _OptionsGroup([_Option(healingType.MEDI_GUN,           "MEDI"),
+                                                    _Option(healingType.KRITZKRIEG,         "KRITZ"),
+                                                    _Option(healingType.QUICK_FIX,          "QUICK"),
+                                                    _Option(healingType.VACCINATOR,         "VACC")],
+                                                    optionsGroupTypes.RADIO,
+                                                    healingType.MEDI_GUN)
+        OptionsGroupHealingTimer =   _OptionsGroup([_Option(healingTimerControls.PLUS_TEN,  "+10"),
+                                                    _Option(healingTimerControls.PLUS_ONE,  "+1"),
+                                                    _Option(healingTimerControls.MINUS_ONE, "-1"),
+                                                    _Option(healingTimerControls.MINUS_FIVE,"-5")],
+                                                    optionsGroupTypes.CLICK)
+        OptionsGroupUber =           _OptionsGroup([_Option(uber.ON_TELE,                   " ON\nTELE"),
+                                                    _Option(uber.UNTIL_JUMP,                "UNTIL\nJUMP"),
+                                                    _Option(uber.INFINITE,                  "INFINITE"),
+                                                    _Option(uber.OFF,                       "OFF")],
+                                                    optionsGroupTypes.RADIO,
+                                                    uber.OFF)
+        OptionsGroupUberTimer =      _OptionsGroup([_Option(uberTimerControls.PLUS_EIGHT,   "+8s"),
+                                                    _Option(uberTimerControls.PLUS_ONE,     "+1s"),
+                                                    _Option(uberTimerControls.MINUS_ONE,    "-1s"),
+                                                    _Option(uberTimerControls.MINUS_FIVE,   "-5s")],
+                                                    optionsGroupTypes.CLICK)
+        OptionsGroupAmmo =           _OptionsGroup([_Option(ammo.ON_TELE,                   " ON\nTELE"),
+                                                    _Option(ammo.ON_ATTACK,                 "  ON\nATTACK"),
+                                                    _Option(ammo.INFINITE,                  "INFINITE"),
+                                                    _Option(ammo.OFF,                       "OFF")],
+                                                    optionsGroupTypes.RADIO,
+                                                    ammo.ON_TELE)
+        OptionsGroupAmmoType =       _OptionsGroup([_Option(ammoType.TOTAL,                 "TOTAL"),
+                                                    _Option(ammoType.RESERVE,               "RESERVE"),
+                                                    _Option(ammoType.CLIP,                  "CLIP"),
+                                                    _Option(ammoType.CLIP_ONLY,             "CLIP\nONLY")],
+                                                    optionsGroupTypes.RADIO,
+                                                    ammoType.TOTAL)
+        OptionsGroupAmmoRegen =      _OptionsGroup([_Option(ammoRegen.HUNDRED,              "100%"),
+                                                    _Option(ammoRegen.SEVENTY_FIVE,         "75%"),
+                                                    _Option(ammoRegen.FIFTY,                "50%"),
+                                                    _Option(ammoRegen.TWENTY_FIVE,          "25%")],
+                                                    optionsGroupTypes.RADIO,
+                                                    ammoRegen.HUNDRED)
+        OptionsGroupAmmoRegenAdd =   _OptionsGroup([_Option(ammoRegenAdd.PLUS_FOURTH,       "+25%"),
+                                                    _Option(ammoRegenAdd.PLUS_SIXTEENTH,    "+6.25%"),
+                                                    _Option(ammoRegenAdd.MINUS_SIXTEENTH,   "-6.25%"),
+                                                    _Option(ammoRegenAdd.MINUS_EIGHTH,      "-12.5%")],
+                                                    optionsGroupTypes.CLICK)
+        OptionsGroupBot =            _OptionsGroup([_Option(bots.NORMAL,                    "NORMAL"),
+                                                    _Option(bots.HARD,                      "HARD"),
+                                                    _Option(bots.EXPERT,                    "EXPERT"),
+                                                    _Option(bots.OFF,                       "OFF")],
+                                                    optionsGroupTypes.RADIO,
+                                                    bots.OFF)
+        OptionsGroupBotSetup =       _OptionsGroup([_Option(botSetups.OUR_SECOND,           "OUR\nSECOND"),
+                                                    _Option(botSetups.MIDDLE,               "MIDDLE"),
+                                                    _Option(botSetups.SECOND,               "SECOND"),
+                                                    _Option(botSetups.LAST,                 "LAST")
+                                                    _Option(botSetups.MIDDLE_ROLLOUT_1,     "ROLLOUT\n  #1"),
+                                                    _Option(botSetups.MIDDLE_ROLLOUT_2,     "ROLLOUT\n  #2"),
+                                                    _Option(botSetups.MIDDLE_ROLLOUT_3,     "ROLLOUT\n  #3"),
+                                                    _Option(botSetups.MIDDLE_ROLLOUT_4,     "ROLLOUT\n  #4"),
+                                                    _Option(botSetups.CUSTOM_1,             "CUSTOM\n  #1"),
+                                                    _Option(botSetups.CUSTOM_2,             "CUSTOM\n  #2"),
+                                                    _Option(botSetups.CUSTOM_3,             "CUSTOM\n  #3"),
+                                                    _Option(botSetups.CUSTOM_4,             "CUSTOM\n  #4")],
+                                                    optionsGroupTypes.RADIO)
+        OptionsGroupCap =            _OptionsGroup([_Option(caps.DEFAULT,                   "DEFAULT"),
+                                                    _Option(caps.OVERRIDE,                  "OVERRIDE")],
+                                                    optionsGroupTypes.RADIO,
+                                                    caps.DEFAULT)
+        OptionsGroupCapAdd =         _OptionsGroup([_Option(capsAdd.PLUS_ONE,               "+1 CAP"),
+                                                    _Option(capsAdd.MINUS_ONE,              "-1 CAP")]
+                                                    optionsGroupTypes.CLICK)
+        OptionsGroupLock =           _OptionsGroup([_Option(locks.DEFAULT,                  "DEFAULT"),
+                                                _Option(locks.ALL,                      "ALL"),
+                                                _Option(locks.ATTACK,                   "ATTACK"),
+                                                _Option(locks.DEFEND,                   "DEFEND")],
+                                                optionsGroupTypes.RADIO,
+                                                locks.DEFAULT)
+        OptionsGroups = []
+        OptionsGroups.append([OptionsGroupTele, OptionsGroupTeleLocation, OptionsGroupTeleTimer, OptionsGroupTeleObjective, 
+                              OptionsGroupHealth, OptionsGroupHealthRegen, OptionsGroupHealthRegenAdd, OptionsGroupHealing, 
+                              OptionsGroupHealingType, OptionsGroupHealingTimer, OptionsGroupUber, OptionsGroupUberTimer
+                              OptionsGroupAmmo, OptionsGroupAmmoType, OptionsGroupAmmoRegen, OptionsGroupAmmoRegenAdd,
+                              OptionsGroupBot, OptionsGroupBotSetup, OptionsGroupCap, OptionsGroupCapAdd, OptionsGroupLock])
+        
+    }
+    function enableDefaults()
+    {
+        foreach(OptionsGroup in OptionsGroups)
+        {
+            OptionsGroup.enableDefault()
+        }
+    }
+}
+:: _Player <- class
+{
+    entity = null
+    team = null
+
+    isHost = null
+
+    Objective = null
+
+    attackPressed = null
+    hasJumped = null
+
+    inOptionsMenu = null
+    menuRotation = null
+    leftMenu = null
+
+    DestinationPreMenu = null
+
+    ObjectiveTimer = null
+    HealingTimer = null
+    UberTimer = null
+
+    currentDamageMultiplier = null
+
+    constructor(playerEntity, playerIsHost = false)
+    {
+        entity = playerEntity
+        isHost = playerIsHost
+    }
+    function addPlayerThink()
+    {
+        AddThinkToEnt(entity, "PlayerThink")
+    }
+}
+class _OptionsMenu
+{
+    static bSize = 20
+    static bHeight = 17    
+    static bWallOffsetX = -90
+    static bWallOffsetY = 56
+    static bWallOffsetZ = 300
+    static bOffsetX = 53.75
+    static bOffsetY = -42  
+    static bWallTextOffsetX = -109
+    static bWallTextOffsetY = 54
+    static bWallTextOffsetZ = 320
+    static bTextOffsetX = 53.75
+    static bTextOffsetY = -42
+    static bTextLetterOffset = 5
+    static bTextLineOffset = 4
+    static bTextLineCharLimit = 8  
+    static bTextOffRedColor =      "255 210 170"
+    static bTextOffWhiteColor =    "255 240 240"
+    static bTextHighlightedColor = "255 255 50"
+
+    constructor(playerOptions)
+    {
+
+    }
+}
+class _Map
+{
+    object = null
+    OptionsMenu = null
+
+    regenPacks = []
+    packsAreAutoMaterializing = true
+
+    capPoints = []
+
+    botGenerators = []
+    builder = null
+    spawnedBuildings = []
+
+    HUDTimer = null
+    HUDBar = null
+
+    RoundRestartTimer = null
+
+    constructor(mapObject)
+    {
+        object = mapObject
+    }
+    function createOptionsMenu(playerOptions)
+    {
+        OptionsMenu = _OptionsMenu(playerOptions)
+    }
+    function destroyOptionsMenu()
+    {
+        return null // not implemented
+    }
+}
+:: _Server <- class
+{
+    Map = null
+    Players = null
+    
+    stvEnabled = false
+
+    static standardOverhealMax = 1.5
+    static quickfixOverhealMax = 1.25
+    static standardHealrate = 24.0
+    static quickfixHealrateMultiplier = 1.4
+    static vaccinatorOverhealrateMultiplier = 0.666667
+
+    static chatCommandIndicator = '!'
+
+    function initializeMap(map)
+    {
+        return _Map(map)
+    }
+    function getMap()
+    {
+        local mapName = GetMapName().tolower()
+
+        local shortMapName = extractShortName(mapName)
+
+        foreach(map in maps)
+        {
+            if (extractShortName(map.name) == shortMapName)
+            {
+                if(map.name != mapName) ClientPrintSafe(shortMapName + " version differs from supported version: " + map.name)
+                return map
+            }
+        }
+        ClientPrintSafe("Map is not (fully) supported")
+        return maps.cp_unsupported
+    }
+    function extractShortName(fullName)
+    {
+        local firstUnderscore = fullName.find("_",0)
+        local secondUnderscore = fullName.find("_",firstUnderscore+1)
+        if(firstUnderscore == null) firstUnderscore = 0
+        if(secondUnderscore == null) secondUnderscore = fullName.len()
+        return fullName.slice(0, secondUnderscore)
+    }
+    function initializePlayers(playerEntities)
+    {
+        local host = GetListenServerHost()
+        local initializedPlayers = []
+
+        foreach(playerEntity in playerEntities)
+        {
+            local initializedPlayer = _Player(playerEntity, playerEntity == host)
+            initializedPlayers.append(initializedPlayer)
+        }
+        return initializedPlayers
+    }
+    function addPlayerThinks(ForPlayers)
+    {
+        printl(ForPlayers)
+        foreach(Player in ForPlayers)
+        {
+            Player.addPlayerThink()
+        }
+    }
+    function removePlayer(player)
+    {
+        Players.remove(player)
+    }
+    function getPlayerEntities()
+    {
+        local playerEntities = []
+        local maxClientCount = MaxClients().tointeger()
+
+        for(local index = 0; index < maxClientCount; index++)
+        {
+            local playerEntity = PlayerInstanceFromIndex(index)
+            if(playerEntity)
+                playerEntities.append(playerEntity)
+        }
+        return playerEntities
+    }
+    function getPlayers(team = null)
+    {
+        if(team == null) 
+            return players
+        
+        local filteredPlayers = []
+        foreach(player in players)
+        {
+            if(player.team == team)
+                filteredPlayers.append(player)
+        }
+        return filteredPlayers
+    }
+    function getPlayerFromEntity(playerEntity)
+    {
+        foreach(Player in Players)
+        {
+            if(Player.entity == playerEntity)
+                return Player
+        }
+        return null
+    }
+    constructor()
+    {
+        //Map = initializeMap(getMap())
+        Players = []
+
+    }
+    function initializeServer()
+    {
+        Players = initializePlayers(getPlayerEntities())
+        addPlayerThinks(Players)
+    }
+}
+local ServerInstance = null
 
 function main()
 {
-    host = GetListenServerHost()
-    players = GetPlayers()
-    player = GetListenServerHost() //REMOVE
-
-    if(players)
-    {
-        foreach(player in players)
-        {
-            AddThinkToEnt(player, "PlayerThink");
-        }
-    }
-
-    
-
-    selectedMap = getMap()
-
-    stvEnabled = (EntIndexToHScript(2) != null)
-    if(stvEnabled) SendToConsole("tv_stoprecord")
-
-    if(selectedMap == null) menuRotation = 0
-    else menuRotation = selectedMap.teles.options.ang
-
-    prepareMap()
-
-    selectedGamemode = getGamemode()
-
-    setDefaultOptions()
-
-    preCacheSounds()
-
-    ClientPrintSafe(null, "JPRAC LOADED")
-
-    if(enableTimerBar) timerBar = Entities.FindByClassname(null, "monster_resource")
+    ServerInstance = _Server()
+    ServerInstance.initializeServer()
+    printl(ServerInstance.Players)
+    //ServerInstance.addPlayerThinks()
+//    stvEnabled = (EntIndexToHScript(2) != null)
+//    if(stvEnabled) SendToConsole("tv_stoprecord")
+//
+//    if(map == null) menuRotation = 0
+//    else menuRotation = map.teles.options.ang
+//
+//    prepareMap()
+//
+//    gamemode = getGamemode()
+//
+//    setDefaultOptions()
+//
+//    preCacheSounds()
+//
+      ClientPrintSafe(null, "JPRAC LOADED")
+//
+//    if(enableTimerBar) timerBar = Entities.FindByClassname(null, "monster_resource")
 
     // TODO?: Show on hud with small symbols what options are selected. Like a little clock if timer is on, timer turns red when times up
 }
 // FUNC REGION: UTILITY
+
 ::ClientPrintSafe <- function(player, text)
 {
     local escape = "^"
@@ -1594,106 +1912,112 @@ function main()
 }
 ::PlayerThink <- function()
 {
+    if(self == null || self.IsPlayer() == false)
+        return
+    local player = self
+    local Player = ServerInstance.getPlayerFromEntity(player)
+    
     //TODO: check if player alive first before doing things like regen ammo
-	local buttons = NetProps.GetPropInt(self, "m_nButtons")
-	if (buttons & Constants.FButtons.IN_ATTACK)
-	{
-        if (!attackPressed && inOptionsMenu)
-        {
-            pressButton()
-        }
-        if (!inOptionsMenu && chosenAmmo == ammo.ON_ATTACK)
-        {
-            regenAmmo(1)
-        }
-        attackPressed = true
-	}
+	local buttons = NetProps.GetPropInt(player, "m_nButtons")
+    if (buttons & Constants.FButtons.IN_ATTACK)
+    {
+          //if (!Player.attackPressed && Player.inOptionsMenu)
+          //{
+          //    pressButton()
+          //}
+          //if (!Player.inOptionsMenu && Player.chosenAmmo == ammo.ON_ATTACK)
+          //{
+          //    regenAmmo(1)
+          //}
+          Player.attackPressed = true
+    }
     else 
     {
-        attackPressed = false
+        Player.attackPressed = false
     }
-    if (!inOptionsMenu && chosenAmmo == ammo.INFINITE)
-    {
-        regenAmmo(1)
-    }
-    if (tickTimerRoundRestart != 0 && tickTimerRoundRestart < tickTimerRoundRestartMax) 
-    {
-        setSpeed(0.0)
-        tickTimerRoundRestart++
-    }
-    if (tickTimerRoundRestart == tickTimerRoundRestartMax)
-    {
-        // TODO: give time update once objective is reached.
-        stopSimulateRoundRestart()
-        onSimulateRoundRestartEnd()
-    }
-    if (tickStopwatch != 0 && !objectiveDone)
-    {
-        tickStopwatch++
-    }
-    if (tickTeleTimer != 0 && tickTimerRoundRestart < tickTimerRoundRestartMax)
-    {
-        tickTeleTimer++
-    }
-    if (tickTeleTimer == tickTeleTimerMax && tickTeleTimerMax != 0 && tickTeleTimerMax != null)
-    {
-        if(chosenTeleObjective == teleObjectives.NONE) onObjectiveEnd(chosenTeleObjective, objectiveResults.FAIL)
-        stopTeleTimer()
-    }
-    if (inOptionsMenu)
-    {
-        if(optionsMenuExists) triggerCollision(player.EyePosition(), menuBoundaries)
-        if(chosenHealth != health.OFF) regenHealth(chosenHealthRegen)
-        else regenHealth(1.0)
-        if(chosenAmmo != ammo.OFF) regenAmmo(chosenAmmoRegen)
-    }
-    if (!inOptionsMenu && player != null && objectiveBoundaries.len() > 0 && !objectiveDone)
-    {
-        triggerCollision(player.EyePosition(), objectiveBoundaries)
-    }
-    if((tickHealingTimer != 0 && tickHealingTimer < tickHealingTimerMax) || 
-       (chosenHealing == healing.INFINITE && !inOptionsMenu) || 
-       (tickHealingTimer != 0 && chosenHealing == healing.UNTIL_JUMP && !inOptionsMenu))
-    {
-        if((chosenHealing != healing.UNTIL_JUMP && chosenHealing != healing.INFINITE) || (chosenHealing == healing.UNTIL_JUMP && hasJumped)) tickHealingTimer++
-
-        local playerHealth = player.GetHealth()
-        local playerMaxHealth = player.GetMaxHealth()
-        local playerMaxOverheal = playerMaxHealth * standardOverhealMax
-        if (chosenHealingType == healingType.QUICK_FIX) playerMaxOverheal = playerMaxHealth * quickfixOverhealMax + 1
-        else playerMaxOverheal = (playerMaxOverheal / 5).tointeger()*5
-
-        local toHeal
-        //TODO: integrate heal ramp up?
-        toHeal = (tickHealingHealed + (playerHealth >= playerMaxHealth ? overhealPerTick : healPerTick)).tointeger() - tickHealingHealed.tointeger()
-
-        if(toHeal >= 1 && playerHealth < playerMaxOverheal)
-        {
-            heal(toHeal)
-        }
-        tickHealingHealed += healPerTick
-    }
-    if(tickHealingTimer == tickHealingTimerMax && tickHealingTimerMax != 0)
-    {
-        stopHealingTimer()
-        onHealingTimerEnd()
-    }
-    if((tickUberTimer != 0 && tickUberTimer < tickUberTimerMax) || (chosenUber == uber.INFINITE && !inOptionsMenu))
-    {
-        if((chosenUber != uber.UNTIL_JUMP && chosenUber != uber.INFINITE) || (chosenUber == uber.UNTIL_JUMP && hasJumped)) tickUberTimer++        
-    }
-    if(tickUberTimer == tickUberTimerMax && tickUberTimerMax != 0)
-    {
-        stopUberTimer()
-        onUberTimerEnd()
-    }
-    if (timerBar && tickTeleTimerMax != 0 && tickTeleTimerMax != null) 
-    {
-        local timerProgress = (tickTeleTimerMax.tofloat() - tickTeleTimer.tofloat()) / tickTeleTimerMax.tofloat()
-        local progressBytePercentage = max(min(round(timerProgress * 255, 0),255),0)
-        NetProps.SetPropInt(timerBar, "m_iBossHealthPercentageByte", progressBytePercentage)
-    }
-    if(!enableTimerBar && timerBar) NetProps.SetPropInt(timerBar, "m_iBossHealthPercentageByte", 0)
+    printl(Player.attackPressed)
+//    if (!Player.inOptionsMenu && Player.chosenAmmo == ammo.INFINITE)
+//    {
+//        regenAmmo(1)
+//    }
+//    if (roundRestartTick != 0 && roundRestartTick < roundRestartTickMax) 
+//    {
+//        setSpeed(0.0)
+//        roundRestartTick++
+//    }
+//    if (roundRestartTick == roundRestartTickMax)
+//    {
+//        // TODO: give time update once objective is reached.
+//        stopSimulateRoundRestart()
+//        onSimulateRoundRestartEnd()
+//    }
+//    if (stopwatchTick != 0 && !objectiveDone)
+//    {
+//        stopwatchTick++
+//    }
+//    if (teleTick != 0 && roundRestartTick < roundRestartTickMax)
+//    {
+//        teleTick++
+//    }
+//    if (teleTick == teleTickMax && teleTickMax != 0 && teleTickMax != null)
+//    {
+//        if(chosenTeleObjective == teleObjectives.NONE) onObjectiveEnd(player, chosenTeleObjective, objectiveResults.FAIL)
+//        stopTeleTimer()
+//    }
+//    if (inOptionsMenu)
+//    {
+//        if(optionsMenuExists) triggerCollision(player.EyePosition(), menuBoundaries)
+//        if(chosenHealth != health.OFF) regenHealth(chosenHealthRegen)
+//        else regenHealth(1.0)
+//        if(chosenAmmo != ammo.OFF) regenAmmo(chosenAmmoRegen)
+//    }
+//    if (!inOptionsMenu && player != null && objectiveBoundaries.len() > 0 && !objectiveDone)
+//    {
+//        triggerCollision(player.EyePosition(), objectiveBoundaries)
+//    }
+//    if((tickHealingTimer != 0 && tickHealingTimer < tickHealingTimerMax) || 
+//       (chosenHealing == healing.INFINITE && !inOptionsMenu) || 
+//       (tickHealingTimer != 0 && chosenHealing == healing.UNTIL_JUMP && !inOptionsMenu))
+//    {
+//        if((chosenHealing != healing.UNTIL_JUMP && chosenHealing != healing.INFINITE) || (chosenHealing == healing.UNTIL_JUMP && hasJumped)) tickHealingTimer++
+//
+//        local playerHealth = player.GetHealth()
+//        local playerMaxHealth = player.GetMaxHealth()
+//        local playerMaxOverheal = playerMaxHealth * standardOverhealMax
+//        if (chosenHealingType == healingType.QUICK_FIX) playerMaxOverheal = playerMaxHealth * quickfixOverhealMax + 1
+//        else playerMaxOverheal = (playerMaxOverheal / 5).tointeger()*5
+//
+//        local toHeal
+//        //TODO: integrate heal ramp up?
+//        toHeal = (tickHealingHealed + (playerHealth >= playerMaxHealth ? overhealPerTick : healPerTick)).tointeger() - tickHealingHealed.tointeger()
+//
+//        if(toHeal >= 1 && playerHealth < playerMaxOverheal)
+//        {
+//            heal(toHeal)
+//        }
+//        tickHealingHealed += healPerTick
+//    }
+//    if(tickHealingTimer == tickHealingTimerMax && tickHealingTimerMax != 0)
+//    {
+//        stopHealingTimer()
+//        onHealingTimerEnd()
+//    }
+//    if((tickUberTimer != 0 && tickUberTimer < tickUberTimerMax) || (chosenUber == uber.INFINITE && !inOptionsMenu))
+//    {
+//        if((chosenUber != uber.UNTIL_JUMP && chosenUber != uber.INFINITE) || (chosenUber == uber.UNTIL_JUMP && hasJumped)) tickUberTimer++        
+//    }
+//    if(tickUberTimer == tickUberTimerMax && tickUberTimerMax != 0)
+//    {
+//        stopUberTimer()
+//        onUberTimerEnd()
+//    }
+//    if (timerBar && teleTickMax != 0 && teleTickMax != null) 
+//    {
+//        local timerProgress = (teleTickMax.tofloat() - teleTick.tofloat()) / teleTickMax.tofloat()
+//        local progressBytePercentage = max(min(round(timerProgress * 255, 0),255),0)
+//        NetProps.SetPropInt(timerBar, "m_iBossHealthPercentageByte", progressBytePercentage)
+//    }
+//    if(!enableTimerBar && timerBar) NetProps.SetPropInt(timerBar, "m_iBossHealthPercentageByte", 0)
 
 	return -1
 }
@@ -1731,31 +2055,8 @@ function getGamemode()
             printl("could not get gamemode")
     }
 }
-function extractShortName(fullName)
-{
-    local firstUnderscore = fullName.find("_",0)
-    local secondUnderscore = fullName.find("_",firstUnderscore+1)
-    if(firstUnderscore == null) firstUnderscore = 0
-    if(secondUnderscore == null) secondUnderscore = fullName.len()
-    return fullName.slice(0, secondUnderscore)
-}
-function getMap()
-{
-    mapName = GetMapName().tolower()
 
-    local shortMapName = extractShortName(mapName)
 
-    foreach(map in maps)
-    {
-        if (extractShortName(map.name) == shortMapName)
-        {
-            if(map.name != mapName) printl(shortMapName + " version differs from supported version: " + map.name)
-            return map
-        }
-    }
-    printl("map is not supported")
-    return maps.cp_unsupported
-}
 function prepareMap()
 {
     local timer
@@ -1812,7 +2113,7 @@ function setDefaultOptions()
 }
 ::getTeleLocation <- function(loc)
 {
-    foreach(tele in selectedMap.teles)
+    foreach(tele in map.teles)
     {
         if(tele.loc == loc) return tele
     }
@@ -1821,7 +2122,7 @@ function setDefaultOptions()
 }
 ::getBotSetup <- function(stp)
 {
-    foreach(setup in selectedMap.setups)
+    foreach(setup in map.setups)
     {
         if(setup.stp == stp) return setup
     }
@@ -1871,7 +2172,7 @@ function forceJoinTeam(team)
         local entrySeperator = ""
         if(demoFile != "") entrySeperator = demoEntrySeperator
         local secondsElapsed
-        if(tickTeleTimerMax != 0 && tickTeleTimerMax != null) secondsElapsed = demoTimerId + round(tickStopwatch / ticksPerSecond.tofloat(),2) + "s"
+        if(teleTickMax != 0 && teleTickMax != null) secondsElapsed = demoTimerId + round(stopwatchTick / ticksPerSecond.tofloat(),2) + "s"
         local newDemoEntry = demoId + newDemoIndex + demoFieldSeperator + demoMapId + mapName + demoFieldSeperator + demoTeleId + teleLocationsText[chosenTeleLocation] + demoFieldSeperator + demoObjectiveId + teleObjectivesText[chosenTeleObjective] + demoFieldSeperator + secondsElapsed
         
         StringToFile(demoFileName, demoFile + entrySeperator + newDemoEntry)
@@ -1900,12 +2201,12 @@ function forceJoinTeam(team)
 ::startSimulateRoundRestart <- function()
 {
     player.ForceRegenerateAndRespawn()
-    tickTimerRoundRestart++
+    roundRestartTick++
 }
 
 ::stopSimulateRoundRestart <- function()
 {
-    tickTimerRoundRestart = 0
+    roundRestartTick = 0
     setSpeed(1.0)
 }
 ::onSimulateRoundRestartEnd <- function()
@@ -1914,16 +2215,17 @@ function forceJoinTeam(team)
 }
 ::stopTeleTimer <- function()
 {
-    tickTeleTimer = 0
+    teleTick = 0
 
     removeTeleTimerUI()
 }
 ::stopStopwatch <- function()
 {
-    tickStopwatch = 0
+    stopwatchTick = 0
 }
-::sendObjectiveMessage <- function(objective = chosenTeleObjective, objectiveResult = objectiveResults.RESET)
+::sendObjectiveMessage <- function(Player, objective, objectiveResult)
 {
+
     local message
     //TODO: Add avg time of completion and PR
     local objectiveRuns = objectivePasses + objectiveFails + objectiveResets
@@ -1950,15 +2252,15 @@ function forceJoinTeam(team)
 
     local messageTime = " "
 
-    if(tickTeleTimerMax != 0 && tickTeleTimerMax != null) 
+    if(teleTickMax != 0 && teleTickMax != null) 
     {
-        printl(tickTeleTimerMax)
+        printl(teleTickMax)
         local secondsLeft
-        if(secondsLeft < 0 || tickTeleTimer == 0) secondsLeft = 0
-        else secondsLeft = round(tickTeleTimerMax / ticksPerSecond.tofloat() - tickTeleTimer / ticksPerSecond.tofloat(),2)
+        if(secondsLeft < 0 || teleTick == 0) secondsLeft = 0
+        else secondsLeft = round(teleTickMax / ticksPerSecond.tofloat() - teleTick / ticksPerSecond.tofloat(),2)
 
-        local secondsElapsed = round(tickStopwatch / ticksPerSecond.tofloat(),2)
-        local secondsElapsedDelta = round((tickStopwatch - tickTeleTimerMax) / ticksPerSecond.tofloat(),2)
+        local secondsElapsed = round(stopwatchTick / ticksPerSecond.tofloat(),2)
+        local secondsElapsedDelta = round((stopwatchTick - teleTickMax) / ticksPerSecond.tofloat(),2)
         
         local averageSecondsElapsed
         local messageAverageSecondsElapsed = ""
@@ -2265,6 +2567,10 @@ function forceJoinTeam(team)
 }
 ::use <- function()
 {
+    if(activator == null || !activator.IsPlayer())
+        return
+    local player = activator
+
     if(inOptionsMenu) 
     {
         leaveOptionsMenu()
@@ -2274,7 +2580,7 @@ function forceJoinTeam(team)
     }
     if(!leftMenu && !objectiveDone && chosenTeleObjective != teleObjectives.NONE) 
     {
-        onObjectiveEnd(chosenTeleObjective, objectiveResults.RESET)
+        onObjectiveEnd(player, chosenTeleObjective, objectiveResults.RESET)
     }
     if(stvEnabled) recordSTV()
     
@@ -2397,22 +2703,22 @@ function enableSTV()
 }
 function saveTele1()
 {
-    selectedMap.teles.custom1 <- { loc = teleLocations.CUSTOM_1, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
+    map.teles.custom1 <- { loc = teleLocations.CUSTOM_1, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
     changeTeleLocation(teleLocations.CUSTOM_1)
 }
 function saveTele2()
 {
-    selectedMap.teles.custom2 <- { loc = teleLocations.CUSTOM_2, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
+    map.teles.custom2 <- { loc = teleLocations.CUSTOM_2, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
     changeTeleLocation(teleLocations.CUSTOM_2)
 }
 function saveTele3()
 {
-    selectedMap.teles.custom3 <- { loc = teleLocations.CUSTOM_3, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
+    map.teles.custom3 <- { loc = teleLocations.CUSTOM_3, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
     changeTeleLocation(teleLocations.CUSTOM_3)
 }
 function saveTele4()
 {
-    selectedMap.teles.custom4 <- { loc = teleLocations.CUSTOM_4, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
+    map.teles.custom4 <- { loc = teleLocations.CUSTOM_4, pos = player.GetOrigin(), ang = player.EyeAngles(), vel = player.GetAbsVelocity() }
     changeTeleLocation(teleLocations.CUSTOM_4)
 }
 ::regenHealth <- function(multiplier)
@@ -2446,9 +2752,9 @@ function saveTele4()
     createTeleTimerUI(chosenTeleTimer)
     EntFireByHandle(teleTimerUI, "Resume", "", 0, null, this)
 
-    tickTeleTimerMax = chosenTeleTimer * ticksPerSecond 
-    tickTeleTimer++
-    tickStopwatch++
+    teleTickMax = chosenTeleTimer * ticksPerSecond 
+    teleTick++
+    stopwatchTick++
 }
 ::startHealingTimer <- function()
 {
@@ -2480,10 +2786,10 @@ function saveTele4()
     switch (chosenCaps)
     {
         case caps.DEFAULT:
-            capMatrix = selectedGamemode.controls[0]
+            capMatrix = gamemode.controls[0]
             break
         case caps.OVERRIDE:
-            capMatrix = selectedGamemode.controls[chosenCapsAmount]
+            capMatrix = gamemode.controls[chosenCapsAmount]
             break
         default:
             printl("chosen caps not found")
@@ -2494,16 +2800,16 @@ function saveTele4()
     switch (chosenLocks)
     {
         case locks.DEFAULT:
-            lockMatrix = selectedGamemode.locks.def[chosenCapsAmount]
+            lockMatrix = gamemode.locks.def[chosenCapsAmount]
             break
         case locks.ALL:
-            lockMatrix = selectedGamemode.locks.all[chosenCapsAmount]
+            lockMatrix = gamemode.locks.all[chosenCapsAmount]
             break
         case locks.ATTACK:
-            lockMatrix = selectedGamemode.locks.attack[chosenCapsAmount]
+            lockMatrix = gamemode.locks.attack[chosenCapsAmount]
             break
         case locks.DEFEND:
-            lockMatrix = selectedGamemode.locks.defend[chosenCapsAmount]
+            lockMatrix = gamemode.locks.defend[chosenCapsAmount]
             break
         default:
             printl("chosen locks not found")
@@ -2586,7 +2892,7 @@ function saveTele4()
     EntFireByHandle(teleTimerUI, "Restart", "", 0, null, this)
     
 }
-::onObjectiveEnd <- function(objective = chosenTeleObjective, objectiveResult = objectiveResults.RESET)
+::onObjectiveEnd <- function(player, objective, objectiveResult)
 {
     if(objectiveResult == objectiveResults.PASS) objectivePasses++
     if(objectiveResult == objectiveResults.FAIL) objectiveFails++
@@ -2646,26 +2952,32 @@ function saveTele4()
 }
 ::reachedObjective <- function()
 {
-    if(objectiveDone) return
+    if(objectiveDone) 
+        return
+    if(activator == null || activator.IsPlayer() == false) 
+        return
+
+    local player = activator
+    
     objectiveDone = true
 
     EmitSoundEx({
     sound_name = sounds.buttonPress, 
     })
 
-    if(tickTeleTimerMax == null || tickTeleTimerMax == 0)
+    if(teleTickMax == null || teleTickMax == 0)
     {
-        onObjectiveEnd(teleObjectives.REACH, objectiveResults.PASS)
+        onObjectiveEnd(player, teleObjectives.REACH, objectiveResults.PASS)
         return
     }
 
-    if(tickTeleTimer == 0 && tickStopwatch != 0) 
+    if(teleTick == 0 && stopwatchTick != 0) 
     {
-        onObjectiveEnd(teleObjectives.REACH, objectiveResults.FAIL)
+        onObjectiveEnd(player, teleObjectives.REACH, objectiveResults.FAIL)
     }
     else 
     {
-        onObjectiveEnd(teleObjectives.REACH, objectiveResults.PASS)
+        onObjectiveEnd(player, teleObjectives.REACH, objectiveResults.PASS)
     }
     stopStopwatch()
 }
@@ -2704,12 +3016,12 @@ function saveTele4()
 ::bTextDisable <- function(text)
 {
     if(!inOptionsMenu) return
-    text.__KeyValueFromString("color", textHighlightedColor)
+    text.__KeyValueFromString("color", bTextHighlightedColor)
 }
 ::bTextEnable <- function(text)
 {
     if(!inOptionsMenu) return
-    text.__KeyValueFromString("color", textOffRedColor)
+    text.__KeyValueFromString("color", bTextOffRedColor)
 }
 ::bEnableOptionsTextCategory <- function(optionsTextCategory)
 {
@@ -3609,13 +3921,13 @@ function toggleOptionsMenu()
     showTitles()
     if(inOptionsMenu) 
     {
-        tele(selectedMap.teles.options)
+        tele(map.teles.options)
         menuRotation += QAngle(0,-90,0)
         player.SnapEyeAngles(menuRotation)//alternative way of handling: leaveOptionsMenu()
     }
     else 
     {
-        menuRotation = selectedMap.teles.options.ang
+        menuRotation = map.teles.options.ang
         enterOptionsMenu()
     }
     
@@ -3635,7 +3947,7 @@ function enterOptionsMenu()
     player.AddCustomAttribute("no_attack", 1, -1)
     turnBuffDecayOff()
 
-    tele(selectedMap.teles.options)
+    tele(map.teles.options)
     createOptionsMenu()
 
 }
@@ -3959,30 +4271,30 @@ function createButtonTexts(type, startIndex, pos, wall, ang, fnt, size, clr, mes
     menuBoundaries.append(menuCeiling)
 
 
-    optionsTextsGroupTele =             createButtonTexts("tele",           0,  wallPos1, 1, playerAng, 10, 8, textOffRedColor,     teleMessages)
-    optionsTextsGroupTeleLocation =     createButtonTexts("teleLocation",   4,  wallPos1, 1, playerAng, 10, 8, textOffRedColor,     teleLocationMessages)
-    optionsTextsGroupTeleObjective =    createButtonTexts("teleObjective",  16, wallPos1, 1, playerAng, 10, 8, textOffRedColor,     teleObjectiveMessages)
-    optionsTextsGroupTeleTimer =        createButtonTexts("teleTimer",      20, wallPos1, 1, playerAng, 10, 8, textOffWhiteColor,   teleTimerMessages)
+    optionsTextsGroupTele =             createButtonTexts("tele",           0,  wallPos1, 1, playerAng, 10, 8, bTextOffRedColor,     teleMessages)
+    optionsTextsGroupTeleLocation =     createButtonTexts("teleLocation",   4,  wallPos1, 1, playerAng, 10, 8, bTextOffRedColor,     teleLocationMessages)
+    optionsTextsGroupTeleObjective =    createButtonTexts("teleObjective",  16, wallPos1, 1, playerAng, 10, 8, bTextOffRedColor,     teleObjectiveMessages)
+    optionsTextsGroupTeleTimer =        createButtonTexts("teleTimer",      20, wallPos1, 1, playerAng, 10, 8, bTextOffWhiteColor,   teleTimerMessages)
 
-    optionsTextsGroupHealth =           createButtonTexts("health",         0,  wallPos2, 2, playerAng, 10, 8, textOffRedColor,     healthMessages)
-    optionsTextsGroupHealthRegen =      createButtonTexts("healthRegen",    4,  wallPos2, 2, playerAng, 10, 8, textOffRedColor,     healthRegenMessages)
-    optionsTextsGroupHealthRegenAdd =   createButtonTexts("healthRegenAdd", 8,  wallPos2, 2, playerAng, 10, 8, textOffWhiteColor,   healthRegenAddMessages)
-    optionsTextsGroupHealing =          createButtonTexts("healing",        12, wallPos2, 2, playerAng, 10, 8, textOffRedColor,     healingMessages)
-    optionsTextsGroupHealingType =      createButtonTexts("healingType",    16, wallPos2, 2, playerAng, 10, 8, textOffRedColor,     healingTypeMessages)
-    optionsTextsGroupHealingTimer =     createButtonTexts("healingTimer",   20, wallPos2, 2, playerAng, 10, 8, textOffWhiteColor,   healingTimerMessages)
+    optionsTextsGroupHealth =           createButtonTexts("health",         0,  wallPos2, 2, playerAng, 10, 8, bTextOffRedColor,     healthMessages)
+    optionsTextsGroupHealthRegen =      createButtonTexts("healthRegen",    4,  wallPos2, 2, playerAng, 10, 8, bTextOffRedColor,     healthRegenMessages)
+    optionsTextsGroupHealthRegenAdd =   createButtonTexts("healthRegenAdd", 8,  wallPos2, 2, playerAng, 10, 8, bTextOffWhiteColor,   healthRegenAddMessages)
+    optionsTextsGroupHealing =          createButtonTexts("healing",        12, wallPos2, 2, playerAng, 10, 8, bTextOffRedColor,     healingMessages)
+    optionsTextsGroupHealingType =      createButtonTexts("healingType",    16, wallPos2, 2, playerAng, 10, 8, bTextOffRedColor,     healingTypeMessages)
+    optionsTextsGroupHealingTimer =     createButtonTexts("healingTimer",   20, wallPos2, 2, playerAng, 10, 8, bTextOffWhiteColor,   healingTimerMessages)
 
-    optionsTextsGroupUber =             createButtonTexts("uber",           0,  wallPos3, 3, playerAng, 10, 8, textOffRedColor,     uberMessages)
-    optionsTextsGroupUberTimer =        createButtonTexts("uberTimer",      4,  wallPos3, 3, playerAng, 10, 8, textOffWhiteColor,   uberTimerMessages)
-    optionsTextsGroupAmmo =             createButtonTexts("ammo",           8,  wallPos3, 3, playerAng, 10, 8, textOffRedColor,     ammoMessages)
-    optionsTextsGroupAmmoType =         createButtonTexts("ammoType",       12, wallPos3, 3, playerAng, 10, 8, textOffRedColor,     ammoTypeMessages)
-    optionsTextsGroupAmmoRegen =        createButtonTexts("ammoRegen",      16, wallPos3, 3, playerAng, 10, 8, textOffRedColor,     ammoRegenMessages)
-    optionsTextsGroupAmmoRegenAdd =     createButtonTexts("ammoRegenAdd",   20, wallPos3, 3, playerAng, 10, 8, textOffWhiteColor,   ammoRegenAddMessages)
+    optionsTextsGroupUber =             createButtonTexts("uber",           0,  wallPos3, 3, playerAng, 10, 8, bTextOffRedColor,     uberMessages)
+    optionsTextsGroupUberTimer =        createButtonTexts("uberTimer",      4,  wallPos3, 3, playerAng, 10, 8, bTextOffWhiteColor,   uberTimerMessages)
+    optionsTextsGroupAmmo =             createButtonTexts("ammo",           8,  wallPos3, 3, playerAng, 10, 8, bTextOffRedColor,     ammoMessages)
+    optionsTextsGroupAmmoType =         createButtonTexts("ammoType",       12, wallPos3, 3, playerAng, 10, 8, bTextOffRedColor,     ammoTypeMessages)
+    optionsTextsGroupAmmoRegen =        createButtonTexts("ammoRegen",      16, wallPos3, 3, playerAng, 10, 8, bTextOffRedColor,     ammoRegenMessages)
+    optionsTextsGroupAmmoRegenAdd =     createButtonTexts("ammoRegenAdd",   20, wallPos3, 3, playerAng, 10, 8, bTextOffWhiteColor,   ammoRegenAddMessages)
 
-    optionsTextsGroupBot =              createButtonTexts("bot",            0,  wallPos4, 4, playerAng, 10, 8, textOffRedColor,     botMessages)
-    optionsTextsGroupBotSetup =         createButtonTexts("botSetup",       4,  wallPos4, 4, playerAng, 10, 8, textOffRedColor,     botSetupMessages)
-    optionsTextsGroupCap =              createButtonTexts("cap",           16,  wallPos4, 4, playerAng, 10, 8, textOffRedColor,     capMessages)
-    optionsTextsGroupCapAdd =           createButtonTexts("cap",           18,  wallPos4, 4, playerAng, 10, 8, textOffWhiteColor,   capAddMessages)
-    optionsTextsGroupLock =             createButtonTexts("lock",          20,  wallPos4, 4, playerAng, 10, 8, textOffRedColor,     lockMessages)
+    optionsTextsGroupBot =              createButtonTexts("bot",            0,  wallPos4, 4, playerAng, 10, 8, bTextOffRedColor,     botMessages)
+    optionsTextsGroupBotSetup =         createButtonTexts("botSetup",       4,  wallPos4, 4, playerAng, 10, 8, bTextOffRedColor,     botSetupMessages)
+    optionsTextsGroupCap =              createButtonTexts("cap",           16,  wallPos4, 4, playerAng, 10, 8, bTextOffRedColor,     capMessages)
+    optionsTextsGroupCapAdd =           createButtonTexts("cap",           18,  wallPos4, 4, playerAng, 10, 8, bTextOffWhiteColor,   capAddMessages)
+    optionsTextsGroupLock =             createButtonTexts("lock",          20,  wallPos4, 4, playerAng, 10, 8, bTextOffRedColor,     lockMessages)
 
     optionsGroupTele =                  createButtons("tele",           4,  0,  wallPos1, 1)
     optionsGroupTeleLocation =          createButtons("teleLocation",   12, 4,  wallPos1, 1)
